@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { GoogleLogout } from "react-google-login";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const clientId =
   "821863821685-rc8tk3jks0u5lbft02tamrd6n90bq6v2.apps.googleusercontent.com";
@@ -45,11 +45,14 @@ const Navbar = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
   const dispatch = useDispatch();
   const { authReducer } = useSelector((state) => ({ ...state }));
+  console.log(authReducer, "auth");
   const [avatar, setAvatar] = useState("");
+  const history = useNavigate();
 
   useEffect(() => {
     setAvatar(localStorage.getItem("avatar"));
-  }, []);
+  }, [authReducer, avatar]);
+
   const onSignoutSuccess = () => {
     dispatch({
       type: "LOGOUT",
@@ -59,8 +62,6 @@ const Navbar = () => {
     localStorage.removeItem("avatar");
     console.clear();
     toast.success("Successfully logout your account");
-    setShowloginButton(true);
-    setShowlogoutButton(false);
     history("/login");
   };
 
@@ -89,7 +90,7 @@ const Navbar = () => {
             />
           </React.Fragment>
         ))}
-        {authReducer ? (
+        {avatar ? (
           <li className="cursor-pointer items-center mx-4 md:text-base flex">
             <FiLogOut className="mr-2" />
             <GoogleLogout
@@ -155,10 +156,10 @@ const Navbar = () => {
             </ul>
           )}
         </div>
-        {authReducer && (
+        {avatar && (
           <img className="w-9 rounded-full ml-6 md:hidden" src={avatar} />
         )}
-        {authReducer ? (
+        {avatar ? (
           <li className="cursor-pointer items-center ml-2 md:text-base flex md:hidden">
             <FiLogOut className="mr-2 text-white" />
             <GoogleLogout
