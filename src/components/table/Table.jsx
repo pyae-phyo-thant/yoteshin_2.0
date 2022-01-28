@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TableFilter from "./TableFilter";
 import TableHeader from "./TableHeader";
 import TableDataRow from "./TableDataRow";
@@ -19,11 +19,17 @@ const Table = ({
   tableHeader,
   tableAction,
 }) => {
-  console.log("table");
   const [currentMinRow, setCurrentMinRow] = useState(0);
   const [currentMaxRow, setCurrentMaxRow] = useState(rowLimit);
   const [resultData, setResultData] = useState(tableDataRow);
   const [isTableFilterOpen, setTableFilterOpen] = useState(false);
+
+  useEffect(() => {
+    setResultData(tableDataRow);
+  }, [tableDataRow]);
+
+  console.log(resultData, "table result");
+  console.log(tableDataRow, "table re");
 
   const toggleTableFilter = () => {
     setTableFilterOpen(!isTableFilterOpen);

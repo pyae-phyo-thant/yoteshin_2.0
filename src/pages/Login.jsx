@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 import { createOrUpdateUser } from "../function/auth";
+import Layout from "../components/Layout";
 
 const clientId =
   "821863821685-rc8tk3jks0u5lbft02tamrd6n90bq6v2.apps.googleusercontent.com";
@@ -50,15 +51,16 @@ const Login = () => {
             google_id: res.data.data.googleId,
           },
         });
-        toast.success("Successfuly Login");
         console.log("login with google", res);
         localStorage.setItem("token", token);
         localStorage.setItem("avatar", avatar);
+        console.log(res.data.data.id);
+        localStorage.setItem("userId", res.data.data.id);
       })
       .catch((err) => {
         console.log("token err", err);
       });
-    history("/");
+    history("/admin/dashboard");
     setShowloginButton(false);
     setShowlogoutButton(true);
   };
@@ -82,7 +84,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <Layout>
       <SocialAuth
         showloginButton={showloginButton}
         clientId={clientId}
@@ -91,7 +93,7 @@ const Login = () => {
         onSignoutSuccess={onSignoutSuccess}
         showlogoutButton={showlogoutButton}
       />
-    </div>
+    </Layout>
   );
 };
 

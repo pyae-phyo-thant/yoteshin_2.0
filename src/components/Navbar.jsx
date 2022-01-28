@@ -15,6 +15,8 @@ import { Link, useNavigate } from "react-router-dom";
 const clientId =
   "821863821685-rc8tk3jks0u5lbft02tamrd6n90bq6v2.apps.googleusercontent.com";
 
+console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID);
+
 const NarbarItem = ({ title, classProps, url }) => {
   return (
     <li className={`mr-4 cursor-pointer md:text-base ${classProps}`}>
@@ -60,6 +62,7 @@ const Navbar = () => {
     });
     localStorage.removeItem("token");
     localStorage.removeItem("avatar");
+    localStorage.removeItem("userId");
     console.clear();
     toast.success("Successfully logout your account");
     history("/login");

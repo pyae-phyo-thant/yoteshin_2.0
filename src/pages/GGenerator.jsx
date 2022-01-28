@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FiShare2 } from "react-icons/fi";
 import { AiOutlineFolderAdd } from "react-icons/ai";
 import { FaGoogleDrive } from "react-icons/fa";
@@ -6,6 +7,16 @@ import { MdAddCircleOutline } from "react-icons/md";
 
 const GGenerator = () => {
   const [multi, setMulti] = useState(false);
+  const [line, setLine] = useState(0);
+  const [multiText, setMultiText] = useState("");
+  const accessToken = localStorage.getItem("token");
+  const history = useNavigate();
+
+  useEffect(() => {
+    if (!accessToken) {
+      history("/login");
+    }
+  }, []);
 
   return (
     <>
@@ -25,17 +36,13 @@ const GGenerator = () => {
             </h1>
           </div>
           <div>
-            {multi ? (
-              <span>Total: 0</span>
-            ) : (
-              <button
-                onClick={() => setMulti(true)}
-                className="flex p-2 rounded-md items-center font-medium border border-sky-500 hover:bg-sky-600 hover:text-white text-sky-600 text-sm "
-              >
-                <AiOutlineFolderAdd className="mr-2" />
-                Multiple Add
-              </button>
-            )}
+            <button
+              onClick={() => setMulti(true)}
+              className="flex p-2 rounded-md items-center font-medium border border-sky-500 hover:bg-sky-600 hover:text-white text-sky-600 text-sm "
+            >
+              <AiOutlineFolderAdd className="mr-2" />
+              Multiple Add
+            </button>
           </div>
         </div>
 
@@ -43,6 +50,8 @@ const GGenerator = () => {
           {multi ? (
             <textarea
               rows={5}
+              value={multiText}
+              onChange={(e) => setMultiText(e.target.value)}
               className="resize-none w-full focus:outline-none focus:border-sky-500 border border-slate-300 placeholder-slate-400"
             />
           ) : (

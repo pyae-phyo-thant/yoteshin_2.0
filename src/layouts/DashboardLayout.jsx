@@ -65,8 +65,6 @@ const DashboardLayout = () => {
                 element={<GGenerator />}
               />
               <Route path="/admin/settings" element={<Settings />} />
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
             </Routes>
           </div>
         </div>
