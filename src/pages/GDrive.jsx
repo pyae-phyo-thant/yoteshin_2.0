@@ -7,11 +7,12 @@ import { BiTrash } from "react-icons/bi";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function createData(name, fileId, size, quality, download, createdDate) {
-  return [name, fileId, size, quality, download, createdDate];
+function createData(id, name, fileId, size, quality, download, createdDate) {
+  return [id, name, fileId, size, quality, download, createdDate];
 }
 
 const tableHeader = [
+  "Id",
   "Name",
   "DriveID",
   "Size",
@@ -41,25 +42,22 @@ function createAction(actionName, actionIcon) {
 //   ),
 // ];
 
-const tableAction = [
-  createAction("Open", MdOpenInNew),
-  createAction("Copy Link", FiCopy),
-  createAction("Delete", BiTrash),
-];
-
 const GDrive = () => {
   const [data, setData] = useState([]);
-  const accessToken = localStorage.getItem("token");
+  const [copyLink, setCopyLink] = useState("");
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
   const history = useNavigate();
 
   useEffect(() => {
-    if (!accessToken) {
+    if (!token) {
       history("/login");
     }
   }, []);
 
   const tableData = data.map((file) =>
     createData(
+      file.id,
       file.name,
       <a
         target="_blank"
@@ -75,15 +73,34 @@ const GDrive = () => {
     )
   );
 
-  console.log(tableData, "row Gdrive");
+  const handleDelete = (id) => {
+    const form = new FormData();
+    form.append("id", id);
+    axios
+      .delete(`https://api.meta-mate.pw/delete?id=${id}`, {
+        headers: {
+          accessToken: token,
+          id: userId,
+        },
+      })
+      .then((res) => console.log("delete success", res))
+      .catch((err) => console.log("delete error", err));
+  };
+
+  const handleOpen = () => {};
+
+  const tableAction = [
+    createAction("Open", MdOpenInNew),
+    createAction("Copy Link", FiCopy),
+    createAction("Delete", BiTrash),
+  ];
 
   useEffect(() => {
     axios
       .get("https://api.meta-mate.pw/data", {
         headers: {
-          accessToken:
-            "ya29.A0ARrdaM8e3F0rhIJnoGg2O7Eeg48UHyZbjQcQBL7RvvP80-KniTSaqc9E3ia6StM61HkAjJ3N4oapBGLK7lLJxrdmh-z8QIoYdgimImehxEV8nvqks6_TZtfiIX767IAW04CISAxnv672Zg9iE9Cj0-oR4gpxTg",
-          id: "3",
+          accessToken: token,
+          id: userId,
         },
       })
       .then((res) => {
@@ -106,6 +123,7 @@ const GDrive = () => {
           tableAction={tableAction}
           rowLimit={10}
           tableFilter={true}
+          handleDelete={handleDelete}
         />
       </div>
     </>

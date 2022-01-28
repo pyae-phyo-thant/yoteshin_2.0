@@ -51,7 +51,6 @@ const Dashboard = () => {
     console.log("copy!");
     console.log(ref.current.value);
   };
-  console.log(copyLink);
 
   const getData = async () => {
     setId(ref.current?.value);

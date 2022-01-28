@@ -1,8 +1,14 @@
 import React from "react";
 import TableAction from "./TableAction";
 
-const TableDataRow = ({ rowCount, tableDataCol, tableHeader, tableAction }) => {
-  console.log("table data row");
+const TableDataRow = ({
+  rowCount,
+  tableDataCol,
+  tableHeader,
+  tableAction,
+  handleDelete,
+}) => {
+  console.log("table data row id", tableDataCol[0]);
   return (
     <div
       className={`block p-4 mb-4 border bg-white rounded-lg shadow md:p-0 md:mb-0 md:bg-transparent md:rounded-none md:shadow-none md:border-none md:table-row ${
@@ -33,7 +39,11 @@ const TableDataRow = ({ rowCount, tableDataCol, tableHeader, tableAction }) => {
       ))}
       {tableAction && (
         <div className="block md:table-cell md:px-2 md:py-3 lg:p-3 text-right md:text-center md:border-t">
-          <TableAction actionData={tableAction} />
+          <TableAction
+            actionData={tableAction}
+            handleDelete={handleDelete}
+            tableDataCol={tableDataCol}
+          />
         </div>
       )}
     </div>

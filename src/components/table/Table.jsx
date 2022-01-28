@@ -18,6 +18,7 @@ const Table = ({
   tableFilter,
   tableHeader,
   tableAction,
+  handleDelete,
 }) => {
   const [currentMinRow, setCurrentMinRow] = useState(0);
   const [currentMaxRow, setCurrentMaxRow] = useState(rowLimit);
@@ -101,6 +102,7 @@ const Table = ({
               tableDataCol={row}
               rowCount={index + currentMinRow + 1}
               tableAction={tableAction}
+              handleDelete={handleDelete}
             />
           </React.Fragment>
         ))}

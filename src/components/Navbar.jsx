@@ -4,6 +4,7 @@ import {
   AiOutlineClose,
   AiOutlineDashboard,
   AiOutlineSetting,
+  AiOutlineUser,
 } from "react-icons/ai";
 import { FiLogOut, FiLogIn, FiShare } from "react-icons/fi";
 import { useSelector } from "react-redux";
@@ -41,13 +42,18 @@ const menu = [
     icon: AiOutlineSetting,
     url: "/admin/settings",
   },
+  {
+    title: "My Account",
+    icon: AiOutlineUser,
+    url: "/user",
+  },
 ];
 
 const Navbar = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
   const dispatch = useDispatch();
   const { authReducer } = useSelector((state) => ({ ...state }));
-  console.log(authReducer, "auth");
+
   const [avatar, setAvatar] = useState("");
   const history = useNavigate();
 
@@ -82,17 +88,25 @@ const Navbar = () => {
         </Link>
       </div>
       <ul className="text-white md:flex hidden list-none flex-row justify-between items-center flex-initial">
+        <li className={`mr-4 cursor-pointer md:text-base`}>
+          <Link to="/">Home</Link>
+        </li>
         {menu.map((item, index) => (
           <React.Fragment key={index}>
-            <item.icon className="mr-2" />
-            <NarbarItem
-              key={item + index}
-              title={item.title}
-              classProps={undefined}
-              url={item.url}
-            />
+            {avatar && (
+              <>
+                <item.icon className="mr-2" />
+                <NarbarItem
+                  key={item + index}
+                  title={item.title}
+                  classProps={undefined}
+                  url={item.url}
+                />
+              </>
+            )}
           </React.Fragment>
         ))}
+
         {avatar ? (
           <li className="cursor-pointer items-center mx-4 md:text-base flex">
             <FiLogOut className="mr-2" />

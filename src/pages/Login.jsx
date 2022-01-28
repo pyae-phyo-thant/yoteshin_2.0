@@ -22,7 +22,6 @@ const Login = () => {
 
   const onLoginSuccess = async (res) => {
     console.log("Login Success:", res);
-    const token = await res.accessToken;
     const avatar = await res.profileObj.imageUrl;
 
     const form = new FormData();
@@ -52,15 +51,27 @@ const Login = () => {
           },
         });
         console.log("login with google", res);
-        localStorage.setItem("token", token);
+
+        localStorage.setItem("token", res.data.data.token);
         localStorage.setItem("avatar", avatar);
-        console.log(res.data.data.id);
         localStorage.setItem("userId", res.data.data.id);
+        localStorage.setItem("email", res.data.data.user_email);
+        localStorage.setItem("name", res.data.data.user_name);
+
+        const GApiKey = "AIzaSyCs0p1eJrsn8KT7yz_F2IZd40JwFOBLEnU";
+
+        // axios
+        //   .get(`https://www.googleapis.com/drive/v3/about?key=${GApiKey}`, {
+        //     headers: {
+        //       "content-type": "application/json",
+        //     },
+        //   })
+        //   .then((res) => console.log("res storage", res));
       })
       .catch((err) => {
         console.log("token err", err);
       });
-    history("/admin/dashboard");
+    history("/user");
     setShowloginButton(false);
     setShowlogoutButton(true);
   };

@@ -1,14 +1,12 @@
 import React from "react";
 
-import { GoogleLogin, GoogleLogout } from "react-google-login";
+import { GoogleLogin } from "react-google-login";
 
 const SocialAuth = ({
   showloginButton,
   clientId,
   onLoginSuccess,
   onLoginFailure,
-  onSignoutSuccess,
-  showlogoutButton,
 }) => {
   return (
     <div className="flex justify-center items-center mt-40">
@@ -20,6 +18,7 @@ const SocialAuth = ({
           onFailure={onLoginFailure}
           cookiePolicy={"single_host_origin"}
           isSignedIn={true}
+          scope="https://www.googleapis.com/auth/drive"
         />
       ) : null}
     </div>
