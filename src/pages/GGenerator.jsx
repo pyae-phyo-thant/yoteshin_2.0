@@ -4,6 +4,7 @@ import { FiShare2 } from "react-icons/fi";
 import { AiOutlineFolderAdd } from "react-icons/ai";
 import { FaGoogleDrive } from "react-icons/fa";
 import { MdAddCircleOutline } from "react-icons/md";
+import { useGoogleApi } from "react-gapi";
 
 const GGenerator = () => {
   const [multi, setMulti] = useState(false);
@@ -11,9 +12,14 @@ const GGenerator = () => {
   const [multiText, setMultiText] = useState("");
   const accessToken = localStorage.getItem("token");
   const history = useNavigate();
+  const gapi = useGoogleApi({
+    scopes: ["profile"],
+  });
+
+  const auth = gapi?.auth2.getAuthInstance();
 
   useEffect(() => {
-    if (!accessToken) {
+    if (!auth) {
       history("/login");
     }
   }, []);

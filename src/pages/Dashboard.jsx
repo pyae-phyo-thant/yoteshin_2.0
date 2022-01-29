@@ -9,6 +9,8 @@ import { CgDatabase } from "react-icons/cg";
 import { BiCopy } from "react-icons/bi";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { formatBytes } from "../function/formatBytes";
+import { useGoogleApi } from "react-gapi";
 
 const gApiKey = "AIzaSyCs0p1eJrsn8KT7yz_F2IZd40JwFOBLEnU";
 
@@ -16,31 +18,26 @@ const Dashboard = () => {
   const [share, setShare] = useState("");
   const [showCopy, setShowCopy] = useState(false);
   const [copyLink, setCopyLink] = useState("");
+  const [isCopy, setIsCopy] = useState(false);
   const [id, setId] = useState("");
+  const baseURL = import.meta.env.VITE_APP_BASE_URL;
   const ref = useRef();
   const copyRef = useRef();
   const history = useNavigate();
   const accessToken = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
+  const gapi = useGoogleApi({
+    scopes: ["profile"],
+  });
+
+  const auth = gapi?.auth2.getAuthInstance();
+
   useEffect(() => {
-    if (!accessToken) {
+    if (!auth) {
       history("/login");
     }
   }, []);
-
-  const units = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-
-  const formatBytes = (x) => {
-    let l = 0,
-      n = parseInt(x, 10) || 0;
-
-    while (n >= 1024 && ++l) {
-      n = n / 1024;
-    }
-
-    return n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l];
-  };
 
   const onChangeState = (e) => {
     setShare(e.target.value);
@@ -49,6 +46,7 @@ const Dashboard = () => {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(copyRef.current.value);
     console.log("copy!");
+    setIsCopy(true);
     console.log(ref.current.value);
   };
 
@@ -80,7 +78,7 @@ const Dashboard = () => {
         form.append("file_size", fileSize);
 
         axios
-          .post("https://api.meta-mate.pw/add-file", form, {
+          .post(`${import.meta.env.VITE_APP_API_URL}/add-file`, form, {
             headers: {
               "content-type": "application/json",
               this_is_token: accessToken,
@@ -89,7 +87,7 @@ const Dashboard = () => {
           .then((res) => {
             console.log("send file data from share link", res);
             setShowCopy(true);
-            setCopyLink(`http://localhost:3000/${res.data.data.slug}`);
+            setCopyLink(`${baseURL}/file/${res.data.data.slug}`);
           })
           .catch((err) => console.log("send file error", err));
       })
@@ -194,7 +192,7 @@ const Dashboard = () => {
                 <span>
                   <BiCopy className="mr-1" />
                 </span>
-                Copy
+                {isCopy ? "Done" : "Copy"}
               </button>
             </div>
           </>

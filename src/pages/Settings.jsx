@@ -1,13 +1,19 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiSettings } from "react-icons/fi";
+import { useGoogleApi } from "react-gapi";
 
 const Settings = () => {
   const accessToken = localStorage.getItem("token");
   const history = useNavigate();
+  const gapi = useGoogleApi({
+    scopes: ["profile"],
+  });
+
+  const auth = gapi?.auth2.getAuthInstance();
 
   useEffect(() => {
-    if (!accessToken) {
+    if (!auth) {
       history("/login");
     }
   }, []);

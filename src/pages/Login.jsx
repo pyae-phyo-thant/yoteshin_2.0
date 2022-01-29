@@ -6,18 +6,18 @@ import SocialAuth from "../components/auth/SocialAuth";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useGoogleApi } from "react-gapi";
 
 import { createOrUpdateUser } from "../function/auth";
 import Layout from "../components/Layout";
-
-const clientId =
-  "821863821685-rc8tk3jks0u5lbft02tamrd6n90bq6v2.apps.googleusercontent.com";
 
 const Login = () => {
   const [showloginButton, setShowloginButton] = useState(true);
   const [showlogoutButton, setShowlogoutButton] = useState(false);
   const history = useNavigate();
   const dispatch = useDispatch();
+  const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
+
   const { authReducer } = useSelector((state) => ({ ...state }));
 
   const onLoginSuccess = async (res) => {
@@ -35,7 +35,7 @@ const Login = () => {
 
     // createOrUpdateUser(form)
     axios
-      .post("https://api.meta-mate.pw/login", form, {
+      .post(`${import.meta.env.VITE_APP_API_URL}/login`, form, {
         headers: {
           "content-type": "application/json",
         },
@@ -58,17 +58,8 @@ const Login = () => {
         localStorage.setItem("avatar", avatar);
         localStorage.setItem("userId", res.data.data.id);
         localStorage.setItem("email", res.data.data.user_email);
+        console.log(res.data.data.user_email);
         localStorage.setItem("name", res.data.data.user_name);
-
-        const GApiKey = "AIzaSyCs0p1eJrsn8KT7yz_F2IZd40JwFOBLEnU";
-
-        // axios
-        //   .get(`https://www.googleapis.com/drive/v3/about?key=${GApiKey}`, {
-        //     headers: {
-        //       "content-type": "application/json",
-        //     },
-        //   })
-        //   .then((res) => console.log("res storage", res));
       })
       .catch((err) => {
         console.log("token err", err);

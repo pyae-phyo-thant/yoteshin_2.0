@@ -11,15 +11,16 @@ const SocialAuth = ({
   return (
     <div className="flex justify-center items-center mt-40">
       {showloginButton ? (
-        <GoogleLogin
-          clientId={clientId}
-          buttonText="Sign In"
-          onSuccess={onLoginSuccess}
-          onFailure={onLoginFailure}
-          cookiePolicy={"single_host_origin"}
-          isSignedIn={true}
-          scope="https://www.googleapis.com/auth/drive"
-        />
+        <>
+          <GoogleLogin
+            clientId={clientId}
+            buttonText="Sign In"
+            onSuccess={onLoginSuccess}
+            onFailure={onLoginFailure}
+            cookiePolicy={"single_host_origin"}
+            isSignedIn={true}
+          />
+        </>
       ) : null}
     </div>
   );

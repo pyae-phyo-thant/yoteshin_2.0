@@ -6,6 +6,8 @@ import { FiCopy } from "react-icons/fi";
 import { BiTrash } from "react-icons/bi";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { getData } from "../function/api";
+import { useGoogleApi } from "react-gapi";
 
 function createData(id, name, fileId, size, quality, download, createdDate) {
   return [id, name, fileId, size, quality, download, createdDate];
@@ -48,9 +50,14 @@ const GDrive = () => {
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
   const history = useNavigate();
+  const gapi = useGoogleApi({
+    scopes: ["profile"],
+  });
+
+  const auth = gapi?.auth2.getAuthInstance();
 
   useEffect(() => {
-    if (!token) {
+    if (!auth) {
       history("/login");
     }
   }, []);
@@ -77,13 +84,20 @@ const GDrive = () => {
     const form = new FormData();
     form.append("id", id);
     axios
-      .delete(`https://api.meta-mate.pw/delete?id=${id}`, {
+      .delete(`${import.meta.env.VITE_APP_API_URL}/delete?id=${id}`, {
         headers: {
           accessToken: token,
           id: userId,
         },
       })
-      .then((res) => console.log("delete success", res))
+      .then(() => {
+        getData(token, userId)
+          .then((res) => {
+            console.log("file data", res);
+            setData(res.data);
+          })
+          .catch((err) => console.log("get file data error", err));
+      })
       .catch((err) => console.log("delete error", err));
   };
 
@@ -96,13 +110,7 @@ const GDrive = () => {
   ];
 
   useEffect(() => {
-    axios
-      .get("https://api.meta-mate.pw/data", {
-        headers: {
-          accessToken: token,
-          id: userId,
-        },
-      })
+    getData(token, userId)
       .then((res) => {
         console.log("file data", res);
         setData(res.data);

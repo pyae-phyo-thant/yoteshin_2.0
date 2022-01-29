@@ -12,11 +12,7 @@ import { GoogleLogout } from "react-google-login";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-
-const clientId =
-  "821863821685-rc8tk3jks0u5lbft02tamrd6n90bq6v2.apps.googleusercontent.com";
-
-console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID);
+import { useGoogleApi } from "react-gapi";
 
 const NarbarItem = ({ title, classProps, url }) => {
   return (
@@ -49,6 +45,8 @@ const menu = [
   },
 ];
 
+const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
+
 const Navbar = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
   const dispatch = useDispatch();
@@ -56,6 +54,11 @@ const Navbar = () => {
 
   const [avatar, setAvatar] = useState("");
   const history = useNavigate();
+  const gapi = useGoogleApi({
+    scopes: ["profile"],
+  });
+
+  const auth = gapi?.auth2.getAuthInstance();
 
   useEffect(() => {
     setAvatar(localStorage.getItem("avatar"));
@@ -69,6 +72,9 @@ const Navbar = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("avatar");
     localStorage.removeItem("userId");
+    localStorage.removeItem("Gtoken");
+    localStorage.removeItem("email");
+    localStorage.removeItem("name");
     console.clear();
     toast.success("Successfully logout your account");
     history("/login");
@@ -107,7 +113,7 @@ const Navbar = () => {
           </React.Fragment>
         ))}
 
-        {avatar ? (
+        {auth ? (
           <li className="cursor-pointer items-center mx-4 md:text-base flex">
             <FiLogOut className="mr-2" />
             <GoogleLogout
@@ -173,10 +179,10 @@ const Navbar = () => {
             </ul>
           )}
         </div>
-        {avatar && (
+        {auth && (
           <img className="w-9 rounded-full ml-6 md:hidden" src={avatar} />
         )}
-        {avatar ? (
+        {auth ? (
           <li className="cursor-pointer items-center ml-2 md:text-base flex md:hidden">
             <FiLogOut className="mr-2 text-white" />
             <GoogleLogout
