@@ -4,20 +4,22 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const User = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("Gtoken");
   const history = useNavigate();
   const GApiKey = "AIzaSyCs0p1eJrsn8KT7yz_F2IZd40JwFOBLEnU";
   useEffect(() => {
-    if (!token) return history("/login");
-    // const storageData = axios.get(
-    //   `https://www.googleapis.com/drive/v3/about?key=${GApiKey}`, {
-    //     headers: {
-    //       "content-type": "application/json",
-    //     },
-    //   }
-    // );
-    // console.log(storageData, "st");
+    const storageData = axios.get(
+      `https://www.googleapis.com/drive/v3/about?key=${GApiKey}`,
+      {
+        headers: {
+          "content-type": "application/json",
+          access_token: token,
+        },
+      }
+    );
+    console.log(storageData, "st");
   }, []);
+  // if (!token) return history("/login");
   return (
     <Layout>
       <div className="m-auto h-screen py-16 md:max-w-screen-sm">

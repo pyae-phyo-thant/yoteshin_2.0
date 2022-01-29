@@ -23,6 +23,7 @@ const Login = () => {
   const onLoginSuccess = async (res) => {
     console.log("Login Success:", res);
     const avatar = await res.profileObj.imageUrl;
+    const Gtoken = await res.accessToken;
 
     const form = new FormData();
 
@@ -53,6 +54,7 @@ const Login = () => {
         console.log("login with google", res);
 
         localStorage.setItem("token", res.data.data.token);
+        localStorage.setItem("Gtoken", Gtoken);
         localStorage.setItem("avatar", avatar);
         localStorage.setItem("userId", res.data.data.id);
         localStorage.setItem("email", res.data.data.user_email);
