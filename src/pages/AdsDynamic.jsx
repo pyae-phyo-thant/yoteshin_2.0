@@ -93,7 +93,7 @@ const AdsDynamic = () => {
       .catch((err) => console.log("url data err", err));
   };
   console.log(data, "non json");
-  console.log(data, "json");
+  console.log(data.name, "json");
 
   const gapiDrive = useGoogleApi({
     discoveryDocs: [

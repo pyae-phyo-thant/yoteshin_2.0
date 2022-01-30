@@ -11,11 +11,6 @@ export const getData = async (token, userId) => {
 
 export const getSingleData = async (name) => {
   return await axios.get(
-    `${import.meta.env.VITE_APP_API_URL}/drive?slug=${name}`,
-    {
-      headers: {
-        "content-type": "application/json",
-      },
-    }
+    `${import.meta.env.VITE_APP_API_URL}/drive?slug=${name}`
   );
 };

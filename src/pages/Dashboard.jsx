@@ -25,6 +25,7 @@ const Dashboard = () => {
   const copyRef = useRef();
   const history = useNavigate();
   const accessToken = localStorage.getItem("token");
+  const gAccessToken = localStorage.getItem("Gtoken");
   const userId = localStorage.getItem("userId");
 
   const gapi = useGoogleApi({
@@ -60,6 +61,7 @@ const Dashboard = () => {
         {},
         {
           headers: {
+            Authorization: "Bearer" + gAccessToken,
             "content-type": "application/json",
           },
         }
