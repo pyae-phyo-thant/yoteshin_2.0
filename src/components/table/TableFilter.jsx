@@ -1,7 +1,6 @@
 import React from "react";
 
 const TableFilter = ({ filteredData }) => {
-  console.log("table filter");
   return (
     <React.Fragment>
       <form action="" className="flex flex-wrap items-center">

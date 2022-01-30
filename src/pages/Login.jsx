@@ -94,8 +94,6 @@ const Login = () => {
         clientId={clientId}
         onLoginSuccess={onLoginSuccess}
         onLoginFailure={onLoginFailure}
-        onSignoutSuccess={onSignoutSuccess}
-        showlogoutButton={showlogoutButton}
       />
     </Layout>
   );

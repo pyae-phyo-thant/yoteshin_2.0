@@ -13,17 +13,16 @@ const User = () => {
   const [free, setFree] = useState("");
   const [percent, setPercent] = useState("");
 
-  const formatUsage = formatBytes(usage).toString();
+  const formatUsage = formatBytes(usage);
+  const formatFree = formatBytes(free);
 
-  const totalWidth = "100" - percent + "%";
   const calculatePercent = () => {
-    let maxPercent = 15;
+    let maxPercent = 100;
 
-    const total = maxPercent - formatUsage.slice(0, 2);
-    setPercent(total + "0");
-    console.log(total);
+    const cal = Math.round((usage / limit) * maxPercent);
+    setPercent(cal);
   };
-  console.log(formatUsage);
+  console.log(percent);
 
   const gapiProfile = useGoogleApi({
     scopes: ["profile"],
@@ -35,7 +34,7 @@ const User = () => {
     if (!auth) {
       history("/login");
     }
-  }, []);
+  }, [limit, usage]);
 
   const gapi = useGoogleApi({
     discoveryDocs: [
@@ -65,7 +64,7 @@ const User = () => {
 
   useEffect(() => {
     getDriveStorage();
-  }, [gapi, limit, usage]);
+  }, [gapi, free]);
 
   return (
     <Layout>
@@ -81,14 +80,14 @@ const User = () => {
           <div className="px-4 py-4 font-semibold border-t border-gray-300">
             Storage
           </div>
-          <span className="px-4 text-sm">Free space: {formatBytes(free)}</span>
+          <span className="px-4 text-sm">Free space: {formatFree}</span>
           <div className="relative pt-1 px-4">
             <div className="overflow-hidden h-4 mb-4 text-xs flex rounded bg-blue-200">
               <div
-                style={{ width: `${totalWidth}` }}
+                style={{ width: `${percent}%` }}
                 className="shadow-none flex font-semibold flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
               >
-                {formatBytes(usage)}
+                {formatUsage}
               </div>
             </div>
           </div>

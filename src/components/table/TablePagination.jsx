@@ -18,7 +18,6 @@ const TablePagination = ({
   isTableFilterOpen,
   toggleTableFilter,
 }) => {
-  console.log("table pagination");
   return (
     <div className="flex md:inline-flex items-center justify-between md:justify-start">
       <div

@@ -56,7 +56,7 @@ const DashboardLayout = () => {
             toggleSidebar={toggleSidebar}
             menuItems={menuItems}
           />
-          <div className="flex-grow lg:p-14">
+          <div className="flex-grow lg:p-14 w-[95%] py-20">
             <Routes>
               <Route exact path="/admin/dashboard" element={<Dashboard />} />
               <Route path="/admin/files" element={<GDrive />} />

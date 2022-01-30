@@ -69,6 +69,7 @@ const Navbar = () => {
       type: "LOGOUT",
       payload: null,
     });
+    gapi.auth2.getAuthInstance().signOut();
     localStorage.removeItem("token");
     localStorage.removeItem("avatar");
     localStorage.removeItem("userId");
@@ -113,7 +114,7 @@ const Navbar = () => {
           </React.Fragment>
         ))}
 
-        {auth ? (
+        {avatar ? (
           <li className="cursor-pointer items-center mx-4 md:text-base flex">
             <FiLogOut className="mr-2" />
             <GoogleLogout

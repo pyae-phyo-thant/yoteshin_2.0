@@ -5,10 +5,9 @@ const TableDataRow = ({
   rowCount,
   tableDataCol,
   tableHeader,
-  tableAction,
   handleDelete,
+  tableAction,
 }) => {
-  console.log("table data row id", tableDataCol[0]);
   return (
     <div
       className={`block p-4 mb-4 border bg-white rounded-lg shadow md:p-0 md:mb-0 md:bg-transparent md:rounded-none md:shadow-none md:border-none md:table-row ${

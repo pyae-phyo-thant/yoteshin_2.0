@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
     <div>
       <Navbar />
       <ToastContainer />
-      <div className="min-h-screen bg-gray-100 py-20">{children}</div>
+      <div className="min-h-screen bg-gray-100">{children}</div>
       <Footer />
     </div>
   );

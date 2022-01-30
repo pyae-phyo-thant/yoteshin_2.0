@@ -29,9 +29,6 @@ const Table = ({
     setResultData(tableDataRow);
   }, [tableDataRow]);
 
-  console.log(resultData, "table result");
-  console.log(tableDataRow, "table re");
-
   const toggleTableFilter = () => {
     setTableFilterOpen(!isTableFilterOpen);
   };
@@ -66,7 +63,7 @@ const Table = ({
     setResultData(data);
   };
   return (
-    <div className="overflow-auto pb-10 text-sm md:border md:bg-white md:rounded-lg md:shadow-md md:overflow-hidden md:pb-0">
+    <div className="overflow-auto overflow-x-auto pb-10 text-sm md:border md:bg-white md:rounded-lg md:shadow-md md:pb-0">
       <div
         style={style.backdropBlur}
         className="fixed bottom-0 left-0 p-4 w-full border-t text-center md:flex md:items-center md:p-1 md:justify-between md:static md:w-auto md:border-none z-20"
