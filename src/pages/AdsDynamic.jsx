@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import Layout from "../components/Layout";
 import driveImg from "../images/google-drive-logo.png";
@@ -10,6 +10,7 @@ import { getSingleData } from "../function/api";
 import SocialAuth from "../components/auth/SocialAuth";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+import { AiOutlineDownload } from "react-icons/ai";
 
 const AdsDynamic = () => {
   const params = useParams();
@@ -19,12 +20,30 @@ const AdsDynamic = () => {
   const [free, setFree] = useState("");
   const [data, setData] = useState({});
   const [percent, setPercent] = useState("");
-  const token = localStorage.getItem("token");
+  const [folderId, setFolderId] = useState("");
+  const [fileId, setFileId] = useState("");
+  const [download, setDownload] = useState("");
+  const [showDownload, setShowDownload] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const Gtoken = localStorage.getItem("Gtoken");
 
-  const formatFree = formatBytes(free);
+  const formatFree = formatBytes(limit - usage);
   const formatUsage = formatBytes(usage).toString();
   const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
+  const apiKey = import.meta.env.VITE_APP_GOOGLE_API_KEY;
+
+  useEffect(() => {
+    getDataFromSlug();
+  }, []);
+  const getDataFromSlug = async () => {
+    await getSingleData(params.name)
+      .then((res) => {
+        console.log(res, "data from url");
+        setData(res.data.data);
+      })
+      .catch((err) => console.log("url data err", err));
+  };
 
   const calculatePercent = () => {
     let maxPercent = 100;
@@ -83,18 +102,6 @@ const AdsDynamic = () => {
     toast.error("Login failed");
   };
 
-  const getDataFromSlug = () => {
-    getSingleData(params.name)
-      .then((res) => {
-        setData(res.data);
-        // let data = res.json();
-        console.log(res, "jjjjjs");
-      })
-      .catch((err) => console.log("url data err", err));
-  };
-  console.log(data, "non json");
-  console.log(data.name, "json");
-
   const gapiDrive = useGoogleApi({
     discoveryDocs: [
       "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
@@ -120,10 +127,8 @@ const AdsDynamic = () => {
       .then(
         (response) => {
           // Handle the results here (response.result has the parsed body).
-          console.log("Response", response);
           setLimit(response.result.storageQuota.limit);
           setUsage(response.result.storageQuota.usage);
-          setFree(limit - usage);
         },
         (err) => {
           console.error("Execute error", err);
@@ -131,28 +136,101 @@ const AdsDynamic = () => {
       );
   };
 
+  const saveToDrive = async () => {
+    setLoading(true);
+    const folderMetadata = {
+      name: "MetaMate Drive",
+      mimeType: "application/vnd.google-apps.folder",
+    };
+    //Filter Folder
+    gapiDrive?.client?.drive.files
+      .list({
+        q: "name='MetaMate Drive'",
+        fields: "files(name,id)",
+      })
+      .then((res) => {
+        let exists =
+          res.result.files.filter((f) => {
+            return f.name.toLowerCase() === folderMetadata.name.toLowerCase();
+          }).length > 0;
+
+        if (!exists) {
+          console.log("not exist");
+          // Create a Folder
+
+          gapiDrive?.client?.drive.files
+            .create({
+              resource: folderMetadata,
+              fields: "id",
+            })
+            .then((res) => {
+              console.log("create folder", res.result.id);
+              setFolderId(res.result.id);
+            })
+            .catch((err) => console.log("create folder err", err));
+        } else {
+          setFolderId(res.result.files[0].id);
+        }
+      })
+      .catch((err) => console.log("filter err", err));
+
+    // Create a file a above folder
+    console.log("folderId", folderId);
+    const fileMetadata = {
+      name: data.name,
+      parents: [folderId],
+      mimeType: data.mime_type,
+    };
+    gapiDrive?.client?.drive.files
+      .create({
+        resource: fileMetadata,
+
+        fields: "id, webContentLink, webViewLink",
+      })
+      .then((res) => {
+        console.log("create file in folder", res);
+        setFileId(res.result.id);
+        setShowDownload(true);
+        setLoading(false);
+        setDownload(res.result.webViewLink);
+      })
+      .catch((err) => {
+        console.log("create err file in folder", err);
+        setLoading(false);
+      });
+  };
+
+  // const handleDownload = async () => {
+  //   await axios.get(
+  //     `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${apiKey}`,
+  //     {
+  //       headers: {
+  //         Authorization: "Bearer"[Gtoken],
+  //         Accept: "application/json",
+  //       },
+  //     }
+  //   );
+  // };
+
   useEffect(() => {
     calculatePercent();
-    getDataFromSlug();
     getDriveStorage();
-  }, [free, limit, usage, gapi, gapiDrive, token]);
-
-  console.log(data, "data");
+  }, [free, limit, usage, onLoginSuccess]);
 
   return (
     <Layout>
       <div className="flex justify-center items-center bg-gray-100">
         <div className="bg-white rounded-md px-4 py-5">
-          <h1 className="font-semibold text-base pb-4">{data.name}</h1>
+          <h1 className="font-semibold text-base pb-4">{data?.name}</h1>
           <div className="flex">
             <div className="mr-2 px-1 py-1 text-white bg-red-700 font-bold text-sm rounded-md">
-              {data.file_size}
+              {data?.file_size}
             </div>
             <div className="mr-2 px-1 py-1 text-white bg-green-700 font-bold text-sm rounded-md">
               N/A
             </div>
             <div className="mr-2 px-1 py-1 text-white bg-sky-700 font-bold text-sm rounded-md">
-              {data.mme_type === null ? "null" : data.mme_type}
+              {data?.mme_type === null ? "null" : data?.mime_type}
             </div>
             <div className="mr-2 px-1 py-1 text-white bg-blue-700 font-bold text-sm rounded-md">
               0 Downloads
@@ -166,9 +244,25 @@ const AdsDynamic = () => {
               <p className="text-center font-semibold">
                 Save this file to your google drive account to download
               </p>
-              <button className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto">
-                <ImGoogleDrive className="mr-2" /> Save to Google Drive
+              <button
+                onClick={saveToDrive}
+                className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+              >
+                <ImGoogleDrive className="mr-2" />{" "}
+                {loading ? "Loading" : "Save to Google Drive"}
               </button>
+
+              {showDownload ? (
+                <a
+                  href={download}
+                  target="_blank"
+                  className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                >
+                  <AiOutlineDownload className="mr-2" /> Download Now
+                </a>
+              ) : (
+                ""
+              )}
 
               <div className="border-t border-b border-gray-400">
                 <span className="px-4 text-sm">Free space: {formatFree}</span>

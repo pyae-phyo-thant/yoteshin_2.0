@@ -11,9 +11,7 @@ const TableAction = ({ actionData, tableDataCol }) => {
     setId(data[0]);
     setSlug(data[1]);
   }, [data]);
-  console.log(data[0], "dayta");
-  console.log(id, "id");
-  console.log(slug, "slug");
+
   return (
     <div className="inline-flex flex-nowrap justify-between items-center">
       {actionData.map((ac, index) => (

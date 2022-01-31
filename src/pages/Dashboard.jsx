@@ -1,4 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
+
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useGoogleApi } from "react-gapi";
+
 import {
   AiOutlineDashboard,
   AiOutlineUser,
@@ -7,12 +12,8 @@ import {
 import { FiShare2, FiArrowRightCircle } from "react-icons/fi";
 import { CgDatabase } from "react-icons/cg";
 import { BiCopy } from "react-icons/bi";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { formatBytes } from "../function/formatBytes";
-import { useGoogleApi } from "react-gapi";
 
-const gApiKey = "AIzaSyCs0p1eJrsn8KT7yz_F2IZd40JwFOBLEnU";
+import { formatBytes } from "../function/formatBytes";
 
 const Dashboard = () => {
   const [share, setShare] = useState("");
@@ -20,13 +21,16 @@ const Dashboard = () => {
   const [copyLink, setCopyLink] = useState("");
   const [isCopy, setIsCopy] = useState(false);
   const [id, setId] = useState("");
-  const baseURL = import.meta.env.VITE_APP_BASE_URL;
+  const [loading, setLoading] = useState(false);
   const ref = useRef();
   const copyRef = useRef();
   const history = useNavigate();
   const accessToken = localStorage.getItem("token");
   const gAccessToken = localStorage.getItem("Gtoken");
   const userId = localStorage.getItem("userId");
+
+  const baseURL = import.meta.env.VITE_APP_BASE_URL;
+  const gApiKey = import.meta.env.VITE_APP_GOOGLE_API_KEY;
 
   const gapi = useGoogleApi({
     scopes: ["profile"],
@@ -46,7 +50,6 @@ const Dashboard = () => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(copyRef.current.value);
-    console.log("copy!");
     setIsCopy(true);
     console.log(ref.current.value);
   };
@@ -54,6 +57,10 @@ const Dashboard = () => {
   const getData = async () => {
     setId(ref.current?.value);
     const driveId = id.slice(32, 65);
+
+    // useGoogleApi({
+    //   scopes: ["https://www.googleapis.com/auth/drive"],
+    // });
 
     await axios
       .get(
@@ -67,7 +74,8 @@ const Dashboard = () => {
         }
       )
       .then((res) => {
-        console.log("drive data", res);
+        console.log("drive data from id", res);
+        //Format to Byte to MB ,GB
         const fileSize = formatBytes(res.data.size);
 
         const form = new FormData();
@@ -87,13 +95,18 @@ const Dashboard = () => {
             },
           })
           .then((res) => {
-            console.log("send file data from share link", res);
+            setLoading(true);
+            console.log("send file data from share id", res);
             setShowCopy(true);
             setCopyLink(`${baseURL}/file/${res.data.data.slug}`);
+            setLoading(false);
           })
-          .catch((err) => console.log("send file error", err));
+          .catch((err) => {
+            setLoading(false);
+            console.log("send file fail", err);
+          });
       })
-      .catch((err) => console.log("drive err", err));
+      .catch((err) => console.log("fail to get data from drive id", err));
   };
 
   return (
@@ -154,7 +167,7 @@ const Dashboard = () => {
           />
           <button
             disabled={!share}
-            onClick={getData}
+            onClick={() => getData()}
             className={`${
               !share
                 ? "bg-blue-300"
@@ -164,7 +177,7 @@ const Dashboard = () => {
             <span>
               <FiArrowRightCircle className="mr-1" />
             </span>
-            Share
+            {loading ? "Loading" : "Share"}
           </button>
         </div>
 

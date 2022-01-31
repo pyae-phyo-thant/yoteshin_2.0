@@ -1,13 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
+// Icon
 import { ImGoogleDrive } from "react-icons/im";
-import Table from "../components/table/Table";
 import { MdOpenInNew } from "react-icons/md";
 import { FiCopy } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { getData } from "../function/api";
-import { useGoogleApi } from "react-gapi";
 import { BiTrash } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
+//Network
+import axios from "axios";
+//Google
+import { useGoogleApi } from "react-gapi";
+//Component
+import Table from "../components/table/Table";
+//Function
+import { getData } from "../function/api";
 
 function createData(
   id,
@@ -40,22 +45,13 @@ function createAction(actionName, actionIcon, actionHandle) {
 
 const GDrive = () => {
   const [data, setData] = useState([]);
-  const [copyLink, setCopyLink] = useState([]);
-  const [copy, setCopy] = useState([]);
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
   const history = useNavigate();
+
   const gapi = useGoogleApi({
     scopes: ["profile"],
   });
-
-  // const copyArray = () => {
-  //   data.map((file) => {
-  //     setCopyLink(file.slug);
-  //     console.log(file.slug, "inside");
-  //   });
-  //   console.log(data, "in");
-  // };
 
   const auth = gapi?.auth2.getAuthInstance();
 
@@ -85,7 +81,6 @@ const GDrive = () => {
   );
 
   const handleDelete = (id) => {
-    console.log("delete", id);
     axios
       .delete(`${import.meta.env.VITE_APP_API_URL}/delete?id=${id}`, {
         headers: {
@@ -104,16 +99,15 @@ const GDrive = () => {
   };
 
   const handleOpen = (slug) => {
-    console.log("open", slug);
     window.open(`${import.meta.env.VITE_APP_BASE_URL}/file/${slug}`, "_blank");
   };
 
   const copyToClipboard = (slug) => {
-    console.log("copy", slug);
     navigator.clipboard.writeText(
       `${import.meta.env.VITE_APP_BASE_URL}/file/${slug}`
     );
   };
+
   const tableAction = [
     createAction("Open", MdOpenInNew, handleOpen),
     createAction("Copy Link", FiCopy, copyToClipboard),
@@ -125,7 +119,6 @@ const GDrive = () => {
       .then((res) => {
         console.log("file data", res);
         setData(res.data);
-        setCopyLink(res.data);
       })
       .catch((err) => console.log("get file data error", err));
   }, []);

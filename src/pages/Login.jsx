@@ -1,27 +1,21 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import SocialAuth from "../components/auth/SocialAuth";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useGoogleApi } from "react-gapi";
 
-import { createOrUpdateUser } from "../function/auth";
+import SocialAuth from "../components/auth/SocialAuth";
 import Layout from "../components/Layout";
+import { login } from "../function/auth";
 
 const Login = () => {
   const [showloginButton, setShowloginButton] = useState(true);
-  const [showlogoutButton, setShowlogoutButton] = useState(false);
   const history = useNavigate();
   const dispatch = useDispatch();
   const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
 
-  const { authReducer } = useSelector((state) => ({ ...state }));
-
   const onLoginSuccess = async (res) => {
-    console.log("Login Success:", res);
+    console.log("Login Success from Google Login:", res);
     const avatar = await res.profileObj.imageUrl;
     const Gtoken = await res.accessToken;
 
@@ -34,12 +28,7 @@ const Login = () => {
     form.append("user_name", res.profileObj.name);
 
     // createOrUpdateUser(form)
-    axios
-      .post(`${import.meta.env.VITE_APP_API_URL}/login`, form, {
-        headers: {
-          "content-type": "application/json",
-        },
-      })
+    login(form)
       .then((res) => {
         dispatch({
           type: "LOGGED_IN_USER",
@@ -51,40 +40,25 @@ const Login = () => {
             google_id: res.data.data.googleId,
           },
         });
-        console.log("login with google", res);
+        console.log("data from api", res);
 
         localStorage.setItem("token", res.data.data.token);
         localStorage.setItem("Gtoken", Gtoken);
         localStorage.setItem("avatar", avatar);
         localStorage.setItem("userId", res.data.data.id);
         localStorage.setItem("email", res.data.data.user_email);
-        console.log(res.data.data.user_email);
         localStorage.setItem("name", res.data.data.user_name);
       })
       .catch((err) => {
-        console.log("token err", err);
+        console.log("send login data err", err);
       });
-    history("/user");
+    history("/admin/dashboard");
     setShowloginButton(false);
-    setShowlogoutButton(true);
   };
 
   const onLoginFailure = (res) => {
     console.log("Login Failed:", res);
     toast.error("Login failed");
-  };
-
-  const onSignoutSuccess = () => {
-    alert("You have been logged out successfully");
-    dispatch({
-      type: "LOGOUT",
-      payload: null,
-    });
-    localStorage.removeItem("token");
-    console.clear();
-
-    setShowloginButton(true);
-    setShowlogoutButton(false);
   };
 
   return (
