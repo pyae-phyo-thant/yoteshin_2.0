@@ -58,10 +58,6 @@ const Dashboard = () => {
     setId(ref.current?.value);
     const driveId = id.slice(32, 65);
 
-    // useGoogleApi({
-    //   scopes: ["https://www.googleapis.com/auth/drive"],
-    // });
-
     await axios
       .get(
         `https://www.googleapis.com/drive/v3/files/${driveId}?fields=name%2Csize%2Cid%2CthumbnailLink%2CmimeType&key=${gApiKey}`,
@@ -69,7 +65,7 @@ const Dashboard = () => {
         {
           headers: {
             Authorization: "Bearer" + gAccessToken,
-            "content-type": "application/json",
+            Accept: "application/json",
           },
         }
       )
@@ -96,7 +92,6 @@ const Dashboard = () => {
           })
           .then((res) => {
             setLoading(true);
-            console.log("send file data from share id", res);
             setShowCopy(true);
             setCopyLink(`${baseURL}/file/${res.data.data.slug}`);
             setLoading(false);

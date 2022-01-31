@@ -164,53 +164,67 @@ const AdsDynamic = () => {
               fields: "id",
             })
             .then((res) => {
-              console.log("create folder", res.result.id);
               setFolderId(res.result.id);
+              setLoading(false);
+              // Create a file a above folder
+
+              const fileMetadata = {
+                name: data.name,
+                parents: [res.result.id],
+                mimeType: data.mime_type,
+              };
+
+              gapiDrive?.client?.drive.files
+                .copy({
+                  resource: fileMetadata,
+                  fileId: data.file_id,
+                  fields: "id, webContentLink",
+                })
+                .then((res) => {
+                  console.log("create file in folder", res);
+                  setFileId(res.result.id);
+                  setShowDownload(true);
+                  setLoading(false);
+                  setDownload(res.result.webContentLink);
+                })
+                .catch((err) => {
+                  console.log("create err file in folder", err);
+                  setLoading(false);
+                });
             })
             .catch((err) => console.log("create folder err", err));
         } else {
           setFolderId(res.result.files[0].id);
+          setLoading(false);
+          // Create a file a above folder
+
+          const fileMetadata = {
+            name: data.name,
+            parents: [res.result.files[0].id],
+            mimeType: data.mime_type,
+          };
+
+          gapiDrive?.client?.drive.files
+            .copy({
+              resource: fileMetadata,
+              fileId: data.file_id,
+              fields: "id, webContentLink",
+            })
+            .then((res) => {
+              console.log("create file in folder", res);
+              setFileId(res.result.id);
+              setShowDownload(true);
+              setLoading(false);
+              setDownload(res.result.webContentLink);
+            })
+            .catch((err) => {
+              console.log("create err file in folder", err);
+              setLoading(false);
+            });
         }
       })
       .catch((err) => console.log("filter err", err));
-
-    // Create a file a above folder
-    console.log("folderId", folderId);
-    const fileMetadata = {
-      name: data.name,
-      parents: [folderId],
-      mimeType: data.mime_type,
-    };
-    gapiDrive?.client?.drive.files
-      .create({
-        resource: fileMetadata,
-
-        fields: "id, webContentLink, webViewLink",
-      })
-      .then((res) => {
-        console.log("create file in folder", res);
-        setFileId(res.result.id);
-        setShowDownload(true);
-        setLoading(false);
-        setDownload(res.result.webViewLink);
-      })
-      .catch((err) => {
-        console.log("create err file in folder", err);
-        setLoading(false);
-      });
   };
-
-  // const handleDownload = async () => {
-  //   await axios.get(
-  //     `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${apiKey}`,
-  //     {
-  //       headers: {
-  //         Authorization: "Bearer"[Gtoken],
-  //         Accept: "application/json",
-  //       },
-  //     }
-  //   );
-  // };
 
   useEffect(() => {
     calculatePercent();
