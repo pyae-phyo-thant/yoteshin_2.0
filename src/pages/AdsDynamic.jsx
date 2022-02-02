@@ -204,8 +204,6 @@ const AdsDynamic = () => {
                     );
                   console.log("create file in folder", res);
                   setFileId(res.result.id);
-                  setShowDownload(true);
-                  setShowSave(false);
                   setLoading(false);
                   setDownload(res.result.webContentLink);
                 })
@@ -242,6 +240,7 @@ const AdsDynamic = () => {
                 })
                 .then((res) => {
                   setShowDownload(true);
+                  setShowSave(false);
                   setLoading(false);
                   console.log(res, "permission");
                 })
