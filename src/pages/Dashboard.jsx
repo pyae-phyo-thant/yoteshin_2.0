@@ -53,6 +53,9 @@ const Dashboard = () => {
     setIsCopy(true);
     console.log(ref.current.value);
   };
+  const gapiDrive = useGoogleApi({
+    scopes: ["https://www.googleapis.com/auth/drive"],
+  });
 
   const getData = async () => {
     setId(ref.current?.value);
@@ -103,6 +106,7 @@ const Dashboard = () => {
       })
       .catch((err) => console.log("fail to get data from drive id", err));
   };
+  console.log(copyLink);
 
   return (
     <>

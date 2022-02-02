@@ -106,7 +106,11 @@ const AdsDynamic = () => {
     discoveryDocs: [
       "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
     ],
-    scopes: ["https://www.googleapis.com/auth/drive.metadata.readonly"],
+    scopes: [
+      "https://www.googleapis.com/auth/drive.metadata.readonly",
+      "https://www.googleapis.com/auth/drive.file",
+      "",
+    ],
   });
 
   const gapi = useGoogleApi({
@@ -208,13 +212,26 @@ const AdsDynamic = () => {
             .copy({
               resource: fileMetadata,
               fileId: data.file_id,
-              fields: "id, webContentLink",
+              fields: "id,webContentLink",
             })
             .then((res) => {
+              gapiDrive?.client?.drive.permissions
+                .create({
+                  role: "reader",
+                  type: "anyone",
+                  fileId: res.result.id,
+                  fields: "*",
+                })
+                .then((res) => {
+                  setShowDownload(true);
+                  setLoading(false);
+                  console.log(res, "permission");
+                })
+                .catch((err) => console.log("creating permission error", err));
               console.log("create file in folder", res);
+
               setFileId(res.result.id);
-              setShowDownload(true);
-              setLoading(false);
+
               setDownload(res.result.webContentLink);
             })
             .catch((err) => {
@@ -268,7 +285,7 @@ const AdsDynamic = () => {
 
               {showDownload ? (
                 <a
-                  href={download}
+                  href={`https://drive.google.com/uc?id=${fileId}`}
                   target="_blank"
                   className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
                 >
