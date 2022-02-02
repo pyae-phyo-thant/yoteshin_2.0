@@ -117,14 +117,14 @@ const GGenerator = () => {
           }
         )
         .then((res) => {
-          console.log("drive data from id", res);
           setDatas(res.data);
-          dataArray.push(res);
+          // dataArray.push(res);
+          console.log("drive data from id", res);
         })
         .catch((err) => console.log("fail to get data from drive id", err));
     });
     console.log("Datas", datas);
-    console.log("Datas array", dataArray);
+    // console.log("Datas array", dataArray);
     //Format to Byte to MB ,GB
     // const fileSize = formatBytes(res.data.size);
 

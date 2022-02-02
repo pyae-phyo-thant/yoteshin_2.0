@@ -24,6 +24,7 @@ const AdsDynamic = () => {
   const [fileId, setFileId] = useState("");
   const [download, setDownload] = useState("");
   const [showDownload, setShowDownload] = useState(false);
+  const [showSave, setShowSave] = useState(true);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const Gtoken = localStorage.getItem("Gtoken");
@@ -185,9 +186,26 @@ const AdsDynamic = () => {
                   fields: "id, webContentLink",
                 })
                 .then((res) => {
+                  gapiDrive?.client?.drive.permissions
+                    .create({
+                      role: "reader",
+                      type: "anyone",
+                      fileId: res.result.id,
+                      fields: "*",
+                    })
+                    .then((res) => {
+                      setShowDownload(true);
+                      setShowSave(false);
+                      setLoading(false);
+                      console.log(res, "permission");
+                    })
+                    .catch((err) =>
+                      console.log("creating permission error", err)
+                    );
                   console.log("create file in folder", res);
                   setFileId(res.result.id);
                   setShowDownload(true);
+                  setShowSave(false);
                   setLoading(false);
                   setDownload(res.result.webContentLink);
                 })
@@ -272,16 +290,22 @@ const AdsDynamic = () => {
           </div>
           {auth?.isSignedIn.get() ? (
             <>
-              <p className="text-center font-semibold">
-                Save this file to your google drive account to download
-              </p>
-              <button
-                onClick={saveToDrive}
-                className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
-              >
-                <ImGoogleDrive className="mr-2" />{" "}
-                {loading ? "Loading" : "Save to Google Drive"}
-              </button>
+              {showSave ? (
+                <>
+                  <p className="text-center font-semibold">
+                    Save this file to your google drive account to download
+                  </p>
+                  <button
+                    onClick={saveToDrive}
+                    className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                  >
+                    <ImGoogleDrive className="mr-2" />{" "}
+                    {loading ? "Loading" : "Save to Google Drive"}
+                  </button>
+                </>
+              ) : (
+                ""
+              )}
 
               {showDownload ? (
                 <a
