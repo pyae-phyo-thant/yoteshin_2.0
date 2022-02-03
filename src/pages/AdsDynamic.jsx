@@ -26,6 +26,8 @@ const AdsDynamic = () => {
   const [showDownload, setShowDownload] = useState(false);
   const [showSave, setShowSave] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [authState, setAuthState] = useState(false);
   const dispatch = useDispatch();
   const Gtoken = localStorage.getItem("Gtoken");
@@ -37,17 +39,18 @@ const AdsDynamic = () => {
 
   useEffect(() => {
     getDataFromSlug();
+    setInterval(() => {
+      setPageLoading(false);
+    }, 1000);
   }, []);
   const getDataFromSlug = async () => {
     await getSingleData(params.name)
       .then((res) => {
         setData(res.data.data);
         console.log(res, "data from url");
-        setLoading(false);
       })
       .catch((err) => {
         console.log("url data err", err);
-        setLoading(false);
       });
   };
 
@@ -138,16 +141,15 @@ const AdsDynamic = () => {
           // Handle the results here (response.result has the parsed body).
           setLimit(response.result.storageQuota.limit);
           setUsage(response.result.storageQuota.usage);
-          setLoading(false);
         },
         (err) => {
           console.error("Execute error", err);
-          setLoading(false);
         }
       );
   };
 
   const saveToDrive = async () => {
+    setSaveLoading(true);
     const folderMetadata = {
       name: "MetaMate Drive",
       mimeType: "application/vnd.google-apps.folder",
@@ -204,6 +206,7 @@ const AdsDynamic = () => {
                   setDownload(res.result.webContentLink);
                   setShowDownload(true);
                   setShowSave(false);
+                  setSaveLoading(false);
                 })
                 .catch((err) => {
                   console.log("create err file in folder", err);
@@ -231,6 +234,7 @@ const AdsDynamic = () => {
               setDownload(res.result.webContentLink);
               setShowDownload(true);
               setShowSave(false);
+              setSaveLoading(false);
               console.log("create file in folder", res);
             })
             .catch((err) => {
@@ -246,98 +250,110 @@ const AdsDynamic = () => {
     getDriveStorage();
     if (auth?.isSignedIn.get()) {
       setAuthState(true);
-      setLoading(false);
+      setInterval(() => {
+        setLoading(false);
+      }, 1500);
     }
   }, [free, limit, usage, onLoginSuccess]);
 
   return (
     <div className="flex justify-center h-screen items-center bg-gray-100">
-      <div className="bg-white rounded-md px-4 py-5">
-        <h1 className="font-semibold text-base pb-4">{data?.name}</h1>
-        <div className="flex">
-          <div className="mr-2 px-1 py-1 text-white bg-red-700 font-bold text-sm rounded-md">
-            {data?.file_size}
-          </div>
-          <div className="mr-2 px-1 py-1 text-white bg-green-700 font-bold text-sm rounded-md">
-            N/A
-          </div>
-          <div className="mr-2 px-1 py-1 text-white bg-sky-700 font-bold text-sm rounded-md">
-            {data?.mme_type === null ? "null" : data?.mime_type}
-          </div>
-          <div className="mr-2 px-1 py-1 text-white bg-blue-700 font-bold text-sm rounded-md">
-            0 Downloads
-          </div>
-        </div>
-        <div className="my-5 items-center flex justify-center">
-          <img src={driveImg} alt="Google Drive" className="md:w-1/5" />
-        </div>
-        {loading ? (
+      {pageLoading ? (
+        <div className="mt-[70px] w-[7%]">
           <Loading />
-        ) : authState ? (
-          <>
-            {showSave ? (
-              <>
-                <p className="text-center font-semibold">
-                  Save this file to your google drive account to download
-                </p>
-                <button
-                  onClick={saveToDrive}
-                  className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
-                >
-                  <ImGoogleDrive className="mr-2" />{" "}
-                  {loading ? "Loading" : "Save to Google Drive"}
-                </button>
-              </>
-            ) : (
-              ""
-            )}
-
-            {showDownload ? (
-              <a
-                href={`https://drive.google.com/uc?id=${fileId}`}
-                target="_blank"
-                className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
-              >
-                <AiOutlineDownload className="mr-2" /> Download Now
-              </a>
-            ) : (
-              ""
-            )}
-
-            <div className="border-t border-b border-gray-400">
-              <span className="px-4 text-sm">Free space: {formatFree}</span>
-              <div className="relative pt-1 px-4">
-                <div className="overflow-hidden h-4 mb-4 text-xs flex rounded bg-blue-200">
-                  <div
-                    style={{ width: `${percent}%` }}
-                    className="shadow-none flex font-semibold flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
+        </div>
+      ) : (
+        <div className="bg-white rounded-md px-4 py-5">
+          <h1 className="font-semibold text-base pb-4">{data?.name}</h1>
+          <div className="flex">
+            <div className="mr-2 px-1 py-1 text-white bg-red-700 font-bold text-sm rounded-md">
+              {data?.file_size}
+            </div>
+            <div className="mr-2 px-1 py-1 text-white bg-green-700 font-bold text-sm rounded-md">
+              N/A
+            </div>
+            <div className="mr-2 px-1 py-1 text-white bg-sky-700 font-bold text-sm rounded-md">
+              {data?.mme_type === null ? "null" : data?.mime_type}
+            </div>
+            <div className="mr-2 px-1 py-1 text-white bg-blue-700 font-bold text-sm rounded-md">
+              0 Downloads
+            </div>
+          </div>
+          <div className="my-5 items-center flex justify-center">
+            <img src={driveImg} alt="Google Drive" className="md:w-1/5" />
+          </div>
+          {loading ? (
+            <div className="w-[10%] m-auto">
+              <Loading />
+            </div>
+          ) : authState ? (
+            <>
+              {showSave ? (
+                <>
+                  <p className="text-center font-semibold">
+                    Save this file to your google drive account to download
+                  </p>
+                  <button
+                    onClick={saveToDrive}
+                    className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
                   >
-                    {formatUsage}
+                    <ImGoogleDrive className="mr-2" />
+                    <span>
+                      {saveLoading ? "Loading" : "Save to Google Drive"}
+                    </span>
+                  </button>
+                </>
+              ) : (
+                ""
+              )}
+
+              {showDownload ? (
+                <a
+                  href={`https://drive.google.com/uc?id=${fileId}`}
+                  target="_blank"
+                  className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                >
+                  <AiOutlineDownload className="mr-2" /> Download Now
+                </a>
+              ) : (
+                ""
+              )}
+
+              <div className="border-t border-b border-gray-400">
+                <span className="px-4 text-sm">Free space: {formatFree}</span>
+                <div className="relative pt-1 px-4">
+                  <div className="overflow-hidden h-4 mb-4 text-xs flex rounded bg-blue-200">
+                    <div
+                      style={{ width: `${percent}%` }}
+                      className="shadow-none flex font-semibold flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
+                    >
+                      {formatUsage}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <p className="text-sm p-2">
-              If your drive is full,{" "}
-              <a
-                href="https://drive.google.com"
-                target="_blank"
-                className="text-blue-600"
-              >
-                click here{" "}
-              </a>
-              to go to your google drive and delete some files.
-            </p>
-          </>
-        ) : (
-          <SocialAuth
-            showloginButton={showloginButton}
-            clientId={clientId}
-            onLoginSuccess={onLoginSuccess}
-            onLoginFailure={onLoginFailure}
-          />
-        )}
-      </div>
+              <p className="text-sm p-2">
+                If your drive is full,{" "}
+                <a
+                  href="https://drive.google.com"
+                  target="_blank"
+                  className="text-blue-600"
+                >
+                  click here{" "}
+                </a>
+                to go to your google drive and delete some files.
+              </p>
+            </>
+          ) : (
+            <SocialAuth
+              showloginButton={showloginButton}
+              clientId={clientId}
+              onLoginSuccess={onLoginSuccess}
+              onLoginFailure={onLoginFailure}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };

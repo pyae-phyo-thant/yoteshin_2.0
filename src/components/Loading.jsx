@@ -1,8 +1,8 @@
 import spinner from "../images/spiner.gif";
-const Loading = () => {
+const Loading = ({ width }) => {
   return (
-    <div className="flex justify-center mt-[70px]">
-      <img className="w-[8%]" src={spinner} alt="Loading" />
+    <div className={`flex justify-center ${width}`}>
+      <img src={spinner} alt="Loading" />
     </div>
   );
 };
