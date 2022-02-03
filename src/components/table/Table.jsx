@@ -3,6 +3,7 @@ import TableFilter from "./TableFilter";
 import TableHeader from "./TableHeader";
 import TableDataRow from "./TableDataRow";
 import TablePagination from "./TablePagination";
+import Loading from "../Loading";
 
 const style = {
   backdropBlur: {
@@ -92,17 +93,21 @@ const Table = ({
       </div>
       <div className="block md:table w-full">
         <TableHeader tableHeader={tableHeader} tableAction={tableAction} />
-        {resultData.slice(currentMinRow, currentMaxRow).map((row, index) => (
-          <React.Fragment key={index}>
-            <TableDataRow
-              tableHeader={tableHeader}
-              tableDataCol={row}
-              rowCount={index + currentMinRow + 1}
-              tableAction={tableAction}
-              handleDelete={handleDelete}
-            />
-          </React.Fragment>
-        ))}
+        {resultData.length <= 0 ? (
+          <p className="p-3 text-lg">No Data Added.</p>
+        ) : (
+          resultData.slice(currentMinRow, currentMaxRow).map((row, index) => (
+            <React.Fragment key={index}>
+              <TableDataRow
+                tableHeader={tableHeader}
+                tableDataCol={row}
+                rowCount={index + currentMinRow + 1}
+                tableAction={tableAction}
+                handleDelete={handleDelete}
+              />
+            </React.Fragment>
+          ))
+        )}
       </div>
     </div>
   );

@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Tooltip from "../tooltip/Tooltip";
-import { BiTrash } from "react-icons/bi";
+import { TableContext } from "../../pages/GDrive";
 
-const TableAction = ({ actionData, tableDataCol }) => {
+const TableAction = ({ actionData }) => {
   const [id, setId] = useState([]);
   const [slug, setSlug] = useState("");
-  const data = tableDataCol.slice(0, 2);
+  const slugData = useContext(TableContext);
 
   useEffect(() => {
-    setId(data[0]);
-    setSlug(data[1]);
-  }, [data]);
+    slugData?.map((data) => {
+      setId(data.id);
+      setSlug(data.slug);
+    });
+  }, []);
 
   return (
     <div className="inline-flex flex-nowrap justify-between items-center">

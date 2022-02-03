@@ -18,10 +18,12 @@ import { formatBytes } from "../function/formatBytes";
 const Dashboard = () => {
   const [share, setShare] = useState("");
   const [showCopy, setShowCopy] = useState(false);
+
   const [copyLink, setCopyLink] = useState("");
   const [isCopy, setIsCopy] = useState(false);
   const [id, setId] = useState("");
   const [loading, setLoading] = useState(false);
+  const [click, setClick] = useState(false);
   const ref = useRef();
   const copyRef = useRef();
   const history = useNavigate();
@@ -53,14 +55,11 @@ const Dashboard = () => {
     setIsCopy(true);
     console.log(ref.current.value);
   };
-  const gapiDrive = useGoogleApi({
-    scopes: ["https://www.googleapis.com/auth/drive"],
-  });
 
   const getData = async () => {
     setId(ref.current?.value);
     const driveId = id.slice(32, 65);
-
+    setLoading(true);
     await axios
       .get(
         `https://www.googleapis.com/drive/v3/files/${driveId}?fields=name%2Csize%2Cid%2CthumbnailLink%2CmimeType&key=${gApiKey}`,
@@ -73,6 +72,8 @@ const Dashboard = () => {
         }
       )
       .then((res) => {
+        setClick(false);
+        setLoading(false);
         console.log("drive data from id", res);
         //Format to Byte to MB ,GB
         const fileSize = formatBytes(res.data.size);
@@ -94,17 +95,18 @@ const Dashboard = () => {
             },
           })
           .then((res) => {
-            setLoading(true);
             setShowCopy(true);
             setCopyLink(`${baseURL}/file/${res.data.data.slug}`);
-            setLoading(false);
           })
           .catch((err) => {
-            setLoading(false);
             console.log("send file fail", err);
           });
       })
-      .catch((err) => console.log("fail to get data from drive id", err));
+      .catch((err) => {
+        setLoading(false);
+        setClick(true);
+        console.log("fail to get data from drive id", err);
+      });
   };
   console.log(copyLink);
 
@@ -171,12 +173,12 @@ const Dashboard = () => {
               !share
                 ? "bg-blue-300"
                 : "bg-blue-500 cursor-pointer hover:bg-blue-800"
-            } rounded-md text-white text-base font-medium ml-6 px-10 py-2 flex items-center`}
+            } rounded-md text-white text-base font-medium ml-6 flex px-10 py-2 items-center`}
           >
             <span>
               <FiArrowRightCircle className="mr-1" />
             </span>
-            {loading ? "Loading" : "Share"}
+            <span>{loading ? "Loading" : click ? "Click_again" : "Share"}</span>
           </button>
         </div>
 

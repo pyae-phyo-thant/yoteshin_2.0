@@ -38,11 +38,7 @@ const TableDataRow = ({
       ))}
       {tableAction && (
         <div className="block md:table-cell md:px-2 md:py-3 lg:p-3 text-right md:text-center md:border-t">
-          <TableAction
-            actionData={tableAction}
-            handleDelete={handleDelete}
-            tableDataCol={tableDataCol}
-          />
+          <TableAction actionData={tableAction} handleDelete={handleDelete} />
         </div>
       )}
     </div>

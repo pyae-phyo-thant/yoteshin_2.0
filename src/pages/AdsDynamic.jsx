@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import Layout from "../components/Layout";
 import driveImg from "../images/google-drive-logo.png";
 import { ImGoogleDrive } from "react-icons/im";
 import { useGoogleApi } from "react-gapi";
@@ -11,6 +10,7 @@ import SocialAuth from "../components/auth/SocialAuth";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { AiOutlineDownload } from "react-icons/ai";
+import Loading from "../components/Loading";
 
 const AdsDynamic = () => {
   const params = useParams();
@@ -25,7 +25,8 @@ const AdsDynamic = () => {
   const [download, setDownload] = useState("");
   const [showDownload, setShowDownload] = useState(false);
   const [showSave, setShowSave] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [authState, setAuthState] = useState(false);
   const dispatch = useDispatch();
   const Gtoken = localStorage.getItem("Gtoken");
 
@@ -40,10 +41,14 @@ const AdsDynamic = () => {
   const getDataFromSlug = async () => {
     await getSingleData(params.name)
       .then((res) => {
-        console.log(res, "data from url");
         setData(res.data.data);
+        console.log(res, "data from url");
+        setLoading(false);
       })
-      .catch((err) => console.log("url data err", err));
+      .catch((err) => {
+        console.log("url data err", err);
+        setLoading(false);
+      });
   };
 
   const calculatePercent = () => {
@@ -119,7 +124,6 @@ const AdsDynamic = () => {
   });
 
   const auth = gapi?.auth2.getAuthInstance();
-
   // if (!auth) {
   //   return <div>Loading to get drive data</div>;
   // }
@@ -134,15 +138,16 @@ const AdsDynamic = () => {
           // Handle the results here (response.result has the parsed body).
           setLimit(response.result.storageQuota.limit);
           setUsage(response.result.storageQuota.usage);
+          setLoading(false);
         },
         (err) => {
           console.error("Execute error", err);
+          setLoading(false);
         }
       );
   };
 
   const saveToDrive = async () => {
-    setLoading(true);
     const folderMetadata = {
       name: "MetaMate Drive",
       mimeType: "application/vnd.google-apps.folder",
@@ -162,7 +167,6 @@ const AdsDynamic = () => {
         if (!exists) {
           console.log("not exist");
           // Create a Folder
-
           gapiDrive?.client?.drive.files
             .create({
               resource: folderMetadata,
@@ -170,9 +174,18 @@ const AdsDynamic = () => {
             })
             .then((res) => {
               setFolderId(res.result.id);
-              setLoading(false);
-              // Create a file a above folder
-
+              gapiDrive?.client?.drive.permissions
+                .create({
+                  role: "reader",
+                  type: "anyone",
+                  fileId: res.result.id,
+                  fields: "*",
+                })
+                .then((res) => {
+                  console.log(res, "permission");
+                })
+                .catch((err) => console.log("creating permission error", err));
+              // Create a file in above folder
               const fileMetadata = {
                 name: data.name,
                 parents: [res.result.id],
@@ -186,38 +199,21 @@ const AdsDynamic = () => {
                   fields: "id, webContentLink",
                 })
                 .then((res) => {
-                  gapiDrive?.client?.drive.permissions
-                    .create({
-                      role: "reader",
-                      type: "anyone",
-                      fileId: res.result.id,
-                      fields: "*",
-                    })
-                    .then((res) => {
-                      setShowDownload(true);
-                      setShowSave(false);
-                      setLoading(false);
-                      console.log(res, "permission");
-                    })
-                    .catch((err) =>
-                      console.log("creating permission error", err)
-                    );
                   console.log("create file in folder", res);
                   setFileId(res.result.id);
-                  setLoading(false);
                   setDownload(res.result.webContentLink);
+                  setShowDownload(true);
+                  setShowSave(false);
                 })
                 .catch((err) => {
                   console.log("create err file in folder", err);
-                  setLoading(false);
                 });
             })
             .catch((err) => console.log("create folder err", err));
         } else {
           setFolderId(res.result.files[0].id);
-          setLoading(false);
-          // Create a file a above folder
 
+          // Create a file in above folder
           const fileMetadata = {
             name: data.name,
             parents: [res.result.files[0].id],
@@ -231,29 +227,14 @@ const AdsDynamic = () => {
               fields: "id,webContentLink",
             })
             .then((res) => {
-              gapiDrive?.client?.drive.permissions
-                .create({
-                  role: "reader",
-                  type: "anyone",
-                  fileId: res.result.id,
-                  fields: "*",
-                })
-                .then((res) => {
-                  setShowDownload(true);
-                  setShowSave(false);
-                  setLoading(false);
-                  console.log(res, "permission");
-                })
-                .catch((err) => console.log("creating permission error", err));
-              console.log("create file in folder", res);
-
               setFileId(res.result.id);
-
               setDownload(res.result.webContentLink);
+              setShowDownload(true);
+              setShowSave(false);
+              console.log("create file in folder", res);
             })
             .catch((err) => {
               console.log("create err file in folder", err);
-              setLoading(false);
             });
         }
       })
@@ -263,97 +244,101 @@ const AdsDynamic = () => {
   useEffect(() => {
     calculatePercent();
     getDriveStorage();
+    if (auth?.isSignedIn.get()) {
+      setAuthState(true);
+      setLoading(false);
+    }
   }, [free, limit, usage, onLoginSuccess]);
 
   return (
-    <Layout>
-      <div className="flex justify-center items-center bg-gray-100">
-        <div className="bg-white rounded-md px-4 py-5">
-          <h1 className="font-semibold text-base pb-4">{data?.name}</h1>
-          <div className="flex">
-            <div className="mr-2 px-1 py-1 text-white bg-red-700 font-bold text-sm rounded-md">
-              {data?.file_size}
-            </div>
-            <div className="mr-2 px-1 py-1 text-white bg-green-700 font-bold text-sm rounded-md">
-              N/A
-            </div>
-            <div className="mr-2 px-1 py-1 text-white bg-sky-700 font-bold text-sm rounded-md">
-              {data?.mme_type === null ? "null" : data?.mime_type}
-            </div>
-            <div className="mr-2 px-1 py-1 text-white bg-blue-700 font-bold text-sm rounded-md">
-              0 Downloads
-            </div>
+    <div className="flex justify-center h-screen items-center bg-gray-100">
+      <div className="bg-white rounded-md px-4 py-5">
+        <h1 className="font-semibold text-base pb-4">{data?.name}</h1>
+        <div className="flex">
+          <div className="mr-2 px-1 py-1 text-white bg-red-700 font-bold text-sm rounded-md">
+            {data?.file_size}
           </div>
-          <div className="my-5 items-center flex justify-center">
-            <img src={driveImg} alt="Google Drive" className="md:w-1/5" />
+          <div className="mr-2 px-1 py-1 text-white bg-green-700 font-bold text-sm rounded-md">
+            N/A
           </div>
-          {auth?.isSignedIn.get() ? (
-            <>
-              {showSave ? (
-                <>
-                  <p className="text-center font-semibold">
-                    Save this file to your google drive account to download
-                  </p>
-                  <button
-                    onClick={saveToDrive}
-                    className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
-                  >
-                    <ImGoogleDrive className="mr-2" />{" "}
-                    {loading ? "Loading" : "Save to Google Drive"}
-                  </button>
-                </>
-              ) : (
-                ""
-              )}
-
-              {showDownload ? (
-                <a
-                  href={`https://drive.google.com/uc?id=${fileId}`}
-                  target="_blank"
-                  className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+          <div className="mr-2 px-1 py-1 text-white bg-sky-700 font-bold text-sm rounded-md">
+            {data?.mme_type === null ? "null" : data?.mime_type}
+          </div>
+          <div className="mr-2 px-1 py-1 text-white bg-blue-700 font-bold text-sm rounded-md">
+            0 Downloads
+          </div>
+        </div>
+        <div className="my-5 items-center flex justify-center">
+          <img src={driveImg} alt="Google Drive" className="md:w-1/5" />
+        </div>
+        {loading ? (
+          <Loading />
+        ) : authState ? (
+          <>
+            {showSave ? (
+              <>
+                <p className="text-center font-semibold">
+                  Save this file to your google drive account to download
+                </p>
+                <button
+                  onClick={saveToDrive}
+                  className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
                 >
-                  <AiOutlineDownload className="mr-2" /> Download Now
-                </a>
-              ) : (
-                ""
-              )}
+                  <ImGoogleDrive className="mr-2" />{" "}
+                  {loading ? "Loading" : "Save to Google Drive"}
+                </button>
+              </>
+            ) : (
+              ""
+            )}
 
-              <div className="border-t border-b border-gray-400">
-                <span className="px-4 text-sm">Free space: {formatFree}</span>
-                <div className="relative pt-1 px-4">
-                  <div className="overflow-hidden h-4 mb-4 text-xs flex rounded bg-blue-200">
-                    <div
-                      style={{ width: `${percent}%` }}
-                      className="shadow-none flex font-semibold flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
-                    >
-                      {formatUsage}
-                    </div>
+            {showDownload ? (
+              <a
+                href={`https://drive.google.com/uc?id=${fileId}`}
+                target="_blank"
+                className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+              >
+                <AiOutlineDownload className="mr-2" /> Download Now
+              </a>
+            ) : (
+              ""
+            )}
+
+            <div className="border-t border-b border-gray-400">
+              <span className="px-4 text-sm">Free space: {formatFree}</span>
+              <div className="relative pt-1 px-4">
+                <div className="overflow-hidden h-4 mb-4 text-xs flex rounded bg-blue-200">
+                  <div
+                    style={{ width: `${percent}%` }}
+                    className="shadow-none flex font-semibold flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
+                  >
+                    {formatUsage}
                   </div>
                 </div>
               </div>
-              <p className="text-sm p-2">
-                If your drive is full,{" "}
-                <a
-                  href="https://drive.google.com"
-                  target="_blank"
-                  className="text-blue-600"
-                >
-                  click here{" "}
-                </a>
-                to go to your google drive and delete some files.
-              </p>
-            </>
-          ) : (
-            <SocialAuth
-              showloginButton={showloginButton}
-              clientId={clientId}
-              onLoginSuccess={onLoginSuccess}
-              onLoginFailure={onLoginFailure}
-            />
-          )}
-        </div>
+            </div>
+            <p className="text-sm p-2">
+              If your drive is full,{" "}
+              <a
+                href="https://drive.google.com"
+                target="_blank"
+                className="text-blue-600"
+              >
+                click here{" "}
+              </a>
+              to go to your google drive and delete some files.
+            </p>
+          </>
+        ) : (
+          <SocialAuth
+            showloginButton={showloginButton}
+            clientId={clientId}
+            onLoginSuccess={onLoginSuccess}
+            onLoginFailure={onLoginFailure}
+          />
+        )}
       </div>
-    </Layout>
+    </div>
   );
 };
 
