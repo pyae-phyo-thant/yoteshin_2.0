@@ -29,6 +29,9 @@ const AdsDynamic = () => {
   const [saveLoading, setSaveLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [authState, setAuthState] = useState(false);
+  const [showSpace, setShowSpace] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [useWeb, setUseWeb] = useState(false);
   const dispatch = useDispatch();
   const Gtoken = localStorage.getItem("Gtoken");
 
@@ -147,6 +150,27 @@ const AdsDynamic = () => {
         }
       );
   };
+  //------ Filter is mobile or not
+  useEffect(() => {
+    /* Storing user's device details in a variable*/
+    let details = navigator.userAgent;
+
+    /* Creating a regular expression 
+     containing some mobile devices keywords 
+     to search it in details string*/
+    let regexp = /android|iphone|kindle|ipad/i;
+
+    /* Using test() method to search regexp in details
+     it returns boolean value*/
+    let isMobileDevice = regexp.test(details);
+
+    if (isMobileDevice) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+      console.log("desktop");
+    }
+  }, []);
 
   const saveToDrive = async () => {
     setSaveLoading(true);
@@ -253,6 +277,12 @@ const AdsDynamic = () => {
       setInterval(() => {
         setLoading(false);
       }, 1500);
+      setShowSpace(true);
+    } else {
+      setAuthState(false);
+      setInterval(() => {
+        setLoading(false);
+      }, 1500);
     }
   }, [free, limit, usage, onLoginSuccess]);
 
@@ -282,43 +312,124 @@ const AdsDynamic = () => {
           <div className="my-5 items-center flex justify-center">
             <img src={driveImg} alt="Google Drive" className="md:w-1/5" />
           </div>
-          {loading ? (
-            <div className="w-[10%] m-auto">
-              <Loading />
-            </div>
-          ) : authState ? (
-            <>
-              {showSave ? (
-                <>
-                  <p className="text-center font-semibold">
-                    Save this file to your google drive account to download
-                  </p>
-                  <button
-                    onClick={saveToDrive}
-                    className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
-                  >
-                    <ImGoogleDrive className="mr-2" />
-                    <span>
-                      {saveLoading ? "Loading" : "Save to Google Drive"}
-                    </span>
-                  </button>
-                </>
-              ) : (
-                ""
-              )}
-
-              {showDownload ? (
-                <a
-                  href={`https://drive.google.com/uc?id=${fileId}`}
-                  target="_blank"
-                  className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+          {
+            isMobile ? (
+              <>
+                <button
+                  onClick={saveToDrive}
+                  className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
                 >
-                  <AiOutlineDownload className="mr-2" /> Download Now
-                </a>
-              ) : (
-                ""
-              )}
+                  <ImGoogleDrive className="mr-2" />
+                  <span>Open in App</span>
+                </button>
+                <button
+                  onClick={() => setUseWeb(true)}
+                  className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                >
+                  <ImGoogleDrive className="mr-2" />
+                  <span>Download on Web</span>
+                </button>
+                {useWeb ? (
+                  loading ? (
+                    <div className="w-[10%] m-auto">
+                      <Loading />
+                    </div>
+                  ) : authState ? (
+                    <>
+                      {showSave ? (
+                        <>
+                          <p className="text-center font-semibold">
+                            Save this file to your google drive account to
+                            download
+                          </p>
+                          <button
+                            onClick={saveToDrive}
+                            className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                          >
+                            <ImGoogleDrive className="mr-2" />
+                            <span>
+                              {saveLoading ? "Loading" : "Save to Google Drive"}
+                            </span>
+                          </button>
+                        </>
+                      ) : (
+                        ""
+                      )}
 
+                      {showDownload ? (
+                        <a
+                          href={`https://drive.google.com/uc?id=${fileId}`}
+                          target="_blank"
+                          className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                        >
+                          <AiOutlineDownload className="mr-2" /> Download Now
+                        </a>
+                      ) : (
+                        ""
+                      )}
+                    </>
+                  ) : (
+                    <SocialAuth
+                      showloginButton={showloginButton}
+                      clientId={clientId}
+                      onLoginSuccess={onLoginSuccess}
+                      onLoginFailure={onLoginFailure}
+                    />
+                  )
+                ) : (
+                  ""
+                )}
+              </>
+            ) : loading ? (
+              <div className="w-[10%] m-auto">
+                <Loading />
+              </div>
+            ) : authState ? (
+              <>
+                {showSave ? (
+                  <>
+                    <p className="text-center font-semibold">
+                      Save this file to your google drive account to download
+                    </p>
+                    <button
+                      onClick={saveToDrive}
+                      className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                    >
+                      <ImGoogleDrive className="mr-2" />
+                      <span>
+                        {saveLoading ? "Loading" : "Save to Google Drive"}
+                      </span>
+                    </button>
+                  </>
+                ) : (
+                  ""
+                )}
+
+                {showDownload ? (
+                  <a
+                    href={`https://drive.google.com/uc?id=${fileId}`}
+                    target="_blank"
+                    className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                  >
+                    <AiOutlineDownload className="mr-2" /> Download Now
+                  </a>
+                ) : (
+                  ""
+                )}
+              </>
+            ) : (
+              <SocialAuth
+                showloginButton={showloginButton}
+                clientId={clientId}
+                onLoginSuccess={onLoginSuccess}
+                onLoginFailure={onLoginFailure}
+              />
+            )
+
+            //
+          }
+          {showSpace && (
+            <>
               <div className="border-t border-b border-gray-400">
                 <span className="px-4 text-sm">Free space: {formatFree}</span>
                 <div className="relative pt-1 px-4">
@@ -344,13 +455,6 @@ const AdsDynamic = () => {
                 to go to your google drive and delete some files.
               </p>
             </>
-          ) : (
-            <SocialAuth
-              showloginButton={showloginButton}
-              clientId={clientId}
-              onLoginSuccess={onLoginSuccess}
-              onLoginFailure={onLoginFailure}
-            />
           )}
         </div>
       )}
