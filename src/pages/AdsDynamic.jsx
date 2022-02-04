@@ -315,20 +315,26 @@ const AdsDynamic = () => {
           {
             isMobile ? (
               <>
-                <button
-                  onClick={saveToDrive}
-                  className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
-                >
-                  <ImGoogleDrive className="mr-2" />
-                  <span>Open in App</span>
-                </button>
-                <button
-                  onClick={() => setUseWeb(true)}
-                  className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
-                >
-                  <ImGoogleDrive className="mr-2" />
-                  <span>Download on Web</span>
-                </button>
+                {useWeb ? (
+                  ""
+                ) : (
+                  <>
+                    <button
+                      onClick={saveToDrive}
+                      className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                    >
+                      <ImGoogleDrive className="mr-2" />
+                      <span>Open in App</span>
+                    </button>
+                    <button
+                      onClick={() => setUseWeb(true)}
+                      className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                    >
+                      <ImGoogleDrive className="mr-2" />
+                      <span>Download on Web</span>
+                    </button>
+                  </>
+                )}
                 {useWeb ? (
                   loading ? (
                     <div className="w-[10%] m-auto">
