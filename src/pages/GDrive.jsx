@@ -36,7 +36,7 @@ export const TableContext = createContext();
 
 const GDrive = () => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
   const history = useNavigate();
@@ -46,14 +46,28 @@ const GDrive = () => {
   });
 
   const auth = gapi?.auth2.getAuthInstance();
-
   useEffect(() => {
     if (!auth) {
       history("/login");
+      setLoading(false);
     }
+    getData(token, userId)
+      .then((res) => {
+        setData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log("get file data error", err);
+      });
   }, []);
 
-  const tableActionData = data.map((file) => file);
+  // useEffect(() => {
+  //   if (!auth) {
+  //     history("/login");
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   const tableData = data.map((file) =>
     createData(
@@ -106,18 +120,7 @@ const GDrive = () => {
     createAction("Delete", BiTrash, handleDelete),
   ];
 
-  useEffect(() => {
-    setLoading(true);
-    getData(token, userId)
-      .then((res) => {
-        setData(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.log("get file data error", err);
-      });
-  }, []);
+  const tableActionData = data?.map((file) => file);
 
   return (
     <>

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -27,7 +26,6 @@ const Login = () => {
     form.append("user_email", res.profileObj.email);
     form.append("user_name", res.profileObj.name);
 
-    // createOrUpdateUser(form)
     login(form)
       .then((res) => {
         dispatch({

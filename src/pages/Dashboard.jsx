@@ -18,7 +18,6 @@ import { formatBytes } from "../function/formatBytes";
 const Dashboard = () => {
   const [share, setShare] = useState("");
   const [showCopy, setShowCopy] = useState(false);
-
   const [copyLink, setCopyLink] = useState("");
   const [isCopy, setIsCopy] = useState(false);
   const [id, setId] = useState("");
@@ -41,7 +40,7 @@ const Dashboard = () => {
   const auth = gapi?.auth2.getAuthInstance();
 
   useEffect(() => {
-    if (!auth) {
+    if (!auth?.isSignedIn.get()) {
       history("/login");
     }
   }, []);

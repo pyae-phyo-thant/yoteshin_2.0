@@ -7,10 +7,8 @@ import {
   AiOutlineUser,
 } from "react-icons/ai";
 import { FiLogOut, FiLogIn, FiShare } from "react-icons/fi";
-import { useSelector } from "react-redux";
 import { GoogleLogout } from "react-google-login";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { useGoogleApi } from "react-gapi";
 
@@ -49,8 +47,8 @@ const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
 
 const Navbar = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
+  const [authenticate, setAuthenticate] = useState(false);
   const dispatch = useDispatch();
-  const { authReducer } = useSelector((state) => ({ ...state }));
   const [avatar, setAvatar] = useState("");
   const history = useNavigate();
   const location = window.location.pathname.slice(0, 6);
@@ -59,11 +57,13 @@ const Navbar = () => {
   });
 
   const auth = gapi?.auth2.getAuthInstance();
-
   useEffect(() => {
-    setAvatar(localStorage.getItem("avatar"));
-  }, [authReducer, avatar]);
-
+    if (auth?.isSignedIn.get()) {
+      setAuthenticate(true);
+    } else {
+      setAuthenticate(false);
+    }
+  }, [auth]);
   const onSignoutSuccess = () => {
     dispatch({
       type: "LOGOUT",
@@ -77,11 +77,14 @@ const Navbar = () => {
     localStorage.removeItem("email");
     localStorage.removeItem("name");
     console.clear();
-    toast.success("Successfully logout your account");
     if (location === "/admin") {
       history("/login");
     }
   };
+
+  useEffect(() => {
+    setAvatar(localStorage.getItem("avatar"));
+  }, [auth]);
 
   // md:flex-[0.5] flex-initial justify-center items-center
   return (
@@ -100,23 +103,20 @@ const Navbar = () => {
         <li className={`mr-4 cursor-pointer md:text-base`}>
           <Link to="/">Home</Link>
         </li>
-        {menu.map((item, index) => (
-          <React.Fragment key={index}>
-            {avatar && (
-              <>
-                <item.icon className="mr-2" />
-                <NarbarItem
-                  key={item + index}
-                  title={item.title}
-                  classProps={undefined}
-                  url={item.url}
-                />
-              </>
-            )}
-          </React.Fragment>
-        ))}
+        {authenticate &&
+          menu.map((item, index) => (
+            <React.Fragment key={index}>
+              <item.icon className="mr-2" />
+              <NarbarItem
+                key={item + index}
+                title={item.title}
+                classProps={undefined}
+                url={item.url}
+              />
+            </React.Fragment>
+          ))}
 
-        {avatar ? (
+        {authenticate ? (
           <li className="cursor-pointer items-center mx-4 md:text-base flex">
             <FiLogOut className="mr-2" />
             <GoogleLogout
@@ -182,10 +182,10 @@ const Navbar = () => {
             </ul>
           )}
         </div>
-        {auth && (
+        {authenticate && (
           <img className="w-9 rounded-full ml-6 md:hidden" src={avatar} />
         )}
-        {auth ? (
+        {authenticate ? (
           <li className="cursor-pointer items-center ml-2 md:text-base flex md:hidden">
             <FiLogOut className="mr-2 text-white" />
             <GoogleLogout

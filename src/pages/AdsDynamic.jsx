@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-import driveImg from "../images/google-drive-logo.png";
-import { ImGoogleDrive } from "react-icons/im";
-import { useGoogleApi } from "react-gapi";
-import { formatBytes } from "../function/formatBytes";
-import { getSingleData } from "../function/api";
-import SocialAuth from "../components/auth/SocialAuth";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { AiOutlineDownload } from "react-icons/ai";
+import { ImGoogleDrive } from "react-icons/im";
+import { useGoogleApi } from "react-gapi";
+
+import driveImg from "../images/google-drive-logo.png";
+
+import { formatBytes } from "../function/formatBytes";
+import { getSingleData } from "../function/api";
+import SocialAuth from "../components/auth/SocialAuth";
 import Loading from "../components/Loading";
 import Layout from "../components/Layout";
 
@@ -18,12 +19,9 @@ const AdsDynamic = () => {
   const [showloginButton, setShowloginButton] = useState(true);
   const [limit, setLimit] = useState("");
   const [usage, setUsage] = useState("");
-  const [free, setFree] = useState("");
   const [data, setData] = useState({});
   const [percent, setPercent] = useState("");
-  const [folderId, setFolderId] = useState("");
   const [fileId, setFileId] = useState("");
-  const [download, setDownload] = useState("");
   const [showDownload, setShowDownload] = useState(false);
   const [showSave, setShowSave] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -35,12 +33,10 @@ const AdsDynamic = () => {
   const [useWeb, setUseWeb] = useState(false);
   const [limitExceed, setLimitExceed] = useState(false);
   const dispatch = useDispatch();
-  const Gtoken = localStorage.getItem("Gtoken");
 
   const formatFree = formatBytes(limit - usage);
   const formatUsage = formatBytes(usage).toString();
   const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
-  const apiKey = import.meta.env.VITE_APP_GOOGLE_API_KEY;
 
   useEffect(() => {
     getDataFromSlug();
@@ -97,15 +93,13 @@ const AdsDynamic = () => {
             google_id: res.data.data.googleId,
           },
         });
-        console.log("login with google", res);
-
         localStorage.setItem("token", res.data.data.token);
         localStorage.setItem("Gtoken", Gtoken);
         localStorage.setItem("avatar", avatar);
         localStorage.setItem("userId", res.data.data.id);
         localStorage.setItem("email", res.data.data.user_email);
-        console.log(res.data.data.user_email);
         localStorage.setItem("name", res.data.data.user_name);
+        console.log("login with google", res);
       })
       .catch((err) => {
         console.log("token err", err);
@@ -135,20 +129,22 @@ const AdsDynamic = () => {
   const auth = gapi?.auth2.getAuthInstance();
 
   const getDriveStorage = () => {
-    gapiDrive?.client?.drive.about
-      .get({
-        fields: "storageQuota",
-      })
-      .then(
-        (response) => {
-          // Handle the results here (response.result has the parsed body).
-          setLimit(response.result.storageQuota.limit);
-          setUsage(response.result.storageQuota.usage);
-        },
-        (err) => {
-          console.error("Execute error", err);
-        }
-      );
+    if (auth?.isSignedIn.get()) {
+      gapiDrive?.client?.drive.about
+        .get({
+          fields: "storageQuota",
+        })
+        .then(
+          (response) => {
+            // Handle the results here (response.result has the parsed body).
+            setLimit(response.result.storageQuota.limit);
+            setUsage(response.result.storageQuota.usage);
+          },
+          (err) => {
+            console.error("Execute error", err);
+          }
+        );
+    }
   };
   //------ Filter is mobile or not
   useEffect(() => {
@@ -199,7 +195,6 @@ const AdsDynamic = () => {
               fields: "id",
             })
             .then((res) => {
-              setFolderId(res.result.id);
               gapiDrive?.client?.drive.permissions
                 .create({
                   role: "reader",
@@ -228,7 +223,6 @@ const AdsDynamic = () => {
                 .then((res) => {
                   console.log("create file in folder", res);
                   setFileId(res.result.id);
-                  setDownload(res.result.webContentLink);
                   setShowDownload(true);
                   setShowSave(false);
                   setSaveLoading(false);
@@ -246,7 +240,6 @@ const AdsDynamic = () => {
             })
             .catch((err) => console.log("create folder err", err));
         } else {
-          setFolderId(res.result.files[0].id);
           console.log("folderId", res);
           // Create a file in above folder
           const fileMetadata = {
@@ -263,7 +256,6 @@ const AdsDynamic = () => {
             })
             .then((res) => {
               setFileId(res.result.id);
-              setDownload(res.result.webContentLink);
               setShowDownload(true);
               setShowSave(false);
               setSaveLoading(false);
@@ -289,18 +281,22 @@ const AdsDynamic = () => {
 
     if (auth?.isSignedIn.get()) {
       setAuthState(true);
+      setShowSpace(true);
+      setShowloginButton(false);
 
       setInterval(() => {
         setLoading(false);
       }, 1500);
-      setShowSpace(true);
     } else {
       setAuthState(false);
+      setShowSpace(false);
+      setShowloginButton(true);
+
       setInterval(() => {
         setLoading(false);
       }, 1500);
     }
-  }, [free, limit, usage, onLoginSuccess]);
+  }, [onLoginSuccess]);
 
   return (
     <Layout>
