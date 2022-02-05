@@ -51,9 +51,9 @@ const Navbar = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
   const dispatch = useDispatch();
   const { authReducer } = useSelector((state) => ({ ...state }));
-
   const [avatar, setAvatar] = useState("");
   const history = useNavigate();
+  const location = window.location.pathname.slice(0, 6);
   const gapi = useGoogleApi({
     scopes: ["profile"],
   });
@@ -78,7 +78,9 @@ const Navbar = () => {
     localStorage.removeItem("name");
     console.clear();
     toast.success("Successfully logout your account");
-    history("/login");
+    if (location === "/admin") {
+      history("/login");
+    }
   };
 
   // md:flex-[0.5] flex-initial justify-center items-center

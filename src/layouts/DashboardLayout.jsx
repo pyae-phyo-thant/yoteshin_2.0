@@ -58,13 +58,10 @@ const DashboardLayout = () => {
           />
           <div className="flex-grow lg:p-14 w-[95%] py-20">
             <Routes>
-              <Route exact path="/admin/dashboard" element={<Dashboard />} />
-              <Route path="/admin/files" element={<GDrive />} />
-              <Route
-                path="/admin/generate/google-drive"
-                element={<GGenerator />}
-              />
-              <Route path="/admin/settings" element={<Settings />} />
+              <Route exact path="/dashboard" element={<Dashboard />} />
+              <Route path="/files" element={<GDrive />} />
+              <Route path="/generate/google-drive" element={<GGenerator />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
           </div>
         </div>

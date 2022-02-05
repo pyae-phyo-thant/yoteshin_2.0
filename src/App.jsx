@@ -14,7 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/*" element={<DashboardLayout />} />
+          <Route path="/admin/*" element={<DashboardLayout />} />
           <Route path="/user" element={<User />} />
           <Route path="/file/:name" exact element={<AdsDynamic />} />
         </Routes>
