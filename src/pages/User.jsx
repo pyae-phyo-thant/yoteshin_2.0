@@ -32,11 +32,13 @@ const User = () => {
   const auth = gapiProfile?.auth2.getAuthInstance();
 
   useEffect(() => {
-    calculatePercent();
     if (!auth?.isSignedIn.get()) {
       history("/login");
     }
   }, []);
+  useEffect(() => {
+    calculatePercent();
+  }, [usage, limit]);
 
   const gapi = useGoogleApi({
     discoveryDocs: [
