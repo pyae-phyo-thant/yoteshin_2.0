@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { HiMenuAlt4 } from "react-icons/hi";
 import {
-  AiOutlineClose,
   AiOutlineDashboard,
   AiOutlineSetting,
   AiOutlineUser,
@@ -101,21 +99,29 @@ const Navbar = () => {
       </div>
       <ul className="text-white flex list-none flex-row justify-between items-center flex-initial">
         {authenticate ? (
-          <li className="cursor-pointer items-center mx-4 md:text-base flex">
-            <FiLogOut className="mr-2" />
-            <GoogleLogout
-              clientId={clientId}
-              onLogoutSuccess={onSignoutSuccess}
-              render={(renderProps) => (
-                <button
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                >
-                  Logout
-                </button>
-              )}
-            />
-          </li>
+          <>
+            <li className="cursor-pointer items-center mx-4 md:text-base flex">
+              <FiLogOut className="mr-2" />
+              <GoogleLogout
+                clientId={clientId}
+                onLogoutSuccess={onSignoutSuccess}
+                render={(renderProps) => (
+                  <button
+                    onClick={renderProps.onClick}
+                    disabled={renderProps.disabled}
+                  >
+                    Logout
+                  </button>
+                )}
+              />
+            </li>
+            {location !== "/admin" && (
+              <li className="cursor-pointer items-center mx-4 md:text-base flex">
+                <AiOutlineDashboard className="mr-2" />
+                <Link to="/admin/dashboard">Dashboard</Link>
+              </li>
+            )}
+          </>
         ) : (
           <li className="cursor-pointer items-center mx-4 md:text-base flex">
             <FiLogIn className="mr-2" />

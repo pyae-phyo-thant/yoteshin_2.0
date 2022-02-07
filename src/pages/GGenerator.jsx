@@ -53,7 +53,13 @@ const GGenerator = () => {
     }
   }, []);
   const gapiDrive = useGoogleApi({
-    scopes: ["https://www.googleapis.com/auth/drive"],
+    discoveryDocs: [
+      "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+    ],
+    scopes: [
+      "https://www.googleapis.com/auth/drive.metadata.readonly",
+      "https://www.googleapis.com/auth/drive.file",
+    ],
   });
 
   const sendSingleData = async () => {
@@ -105,7 +111,8 @@ const GGenerator = () => {
   const sendMultiData = () => {
     console.log(ids, "array of id");
     let dataArray = [];
-    ids.map(async (id) => {
+
+    ids.forEach(async (id) => {
       await axios
         .get(
           `https://www.googleapis.com/drive/v3/files/${id}?fields=name%2Csize%2Cid%2CthumbnailLink%2CmimeType&key=${gApiKey}`,
@@ -118,13 +125,14 @@ const GGenerator = () => {
           }
         )
         .then((res) => {
-          setDatas(res.data);
-          // dataArray.push(res);
+          dataArray.push(...dataArray, res);
           console.log("drive data from id", res);
         })
         .catch((err) => console.log("fail to get data from drive id", err));
     });
-    console.log("Datas", datas);
+    setDatas(dataArray);
+    console.log("dataArray", dataArray);
+    console.log("datas", datas);
     // console.log("Datas array", dataArray);
     //Format to Byte to MB ,GB
     // const fileSize = formatBytes(res.data.size);
