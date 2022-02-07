@@ -136,12 +136,15 @@ const Dashboard = () => {
   };
   useEffect(() => {
     getData(accessToken, userId).then((res) => {
-      setTotalLinks(res.data.length);
-      const total = res.data.reduce(
-        (n, { down_count }) => n + parseInt(down_count),
-        0
-      );
-      setTotalDownCount(total);
+      if (res.data) {
+        setTotalLinks(res.data.length);
+
+        const total = res.data.reduce(
+          (n, { down_count }) => n + parseInt(down_count),
+          0
+        );
+        setTotalDownCount(total);
+      }
     });
   }, []);
 
