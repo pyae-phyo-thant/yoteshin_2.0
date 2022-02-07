@@ -95,9 +95,6 @@ const GDrive = () => {
     createAction("Delete", BiTrash, handleDelete),
   ];
 
-  // const tableActionData = data?.map((file) => file);
-  // console.log(tableActionData);
-
   return (
     <>
       {loading ? (
@@ -114,7 +111,7 @@ const GDrive = () => {
               tableHeader={tableHeader}
               tableData={tableData}
               tableAction={tableAction}
-              rowLimit={7}
+              rowLimit={10}
               tableFilter={true}
             />
           </div>

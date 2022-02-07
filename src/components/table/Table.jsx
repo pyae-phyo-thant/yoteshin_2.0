@@ -58,13 +58,10 @@ const Table = ({
   };
 
   const filteredData = (query) => {
-    console.log(tableData);
+    let data = tableData.filter((tdr) =>
+      tdr.name.toLowerCase().includes(query)
+    );
 
-    let data = tableData.map((data) => {
-      data.name.filter((tdr) =>
-        tdr.reduce((prev, next) => (prev + next).toLowerCase()).includes(query)
-      );
-    });
     setResultData(data);
   };
 

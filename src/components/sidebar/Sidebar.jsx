@@ -19,7 +19,7 @@ const Sidebar = ({ sidebarState, toggleSidebar, menuItems }) => {
       }`}
     >
       <div
-        className={`fixed flex top-0 w-screen h-screen z-30 xl:block xl:sticky xl:w-full xl:h-auto xl:z-0 transform xl:translate-x-0 transition-all duration-150 xl:transition-none xl:duration-0 ${
+        className={`fixed flex top-0 w-screen h-screen z-30 xl:sticky xl:w-full xl:h-auto xl:z-0 transform xl:translate-x-0 transition-all duration-150 xl:transition-none xl:duration-0 ${
           sidebarState ? "left-0" : "-translate-x-full"
         }`}
       >
