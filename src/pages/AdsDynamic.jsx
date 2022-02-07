@@ -9,7 +9,7 @@ import { useGoogleApi } from "react-gapi";
 import driveImg from "../images/google-drive-logo.png";
 
 import { formatBytes } from "../function/formatBytes";
-import { getSingleData } from "../function/api";
+import { getSingleData, postDownCount } from "../function/api";
 import SocialAuth from "../components/auth/SocialAuth";
 import Loading from "../components/Loading";
 import Layout from "../components/Layout";
@@ -32,6 +32,9 @@ const AdsDynamic = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [useWeb, setUseWeb] = useState(false);
   const [limitExceed, setLimitExceed] = useState(false);
+
+  const [counts, setCounts] = useState(1);
+
   const dispatch = useDispatch();
 
   const formatFree = formatBytes(limit - usage);
@@ -118,7 +121,6 @@ const AdsDynamic = () => {
     scopes: [
       "https://www.googleapis.com/auth/drive.metadata.readonly",
       "https://www.googleapis.com/auth/drive.file",
-      "",
     ],
   });
 
@@ -177,7 +179,7 @@ const AdsDynamic = () => {
     //Filter Folder
     gapiDrive?.client?.drive.files
       .list({
-        q: "name='MetaMate Drive'",
+        q: "name='MetaMate Drive' and trashed=false",
         fields: "files(name,id)",
       })
       .then((res) => {
@@ -298,6 +300,24 @@ const AdsDynamic = () => {
     }
   }, [onLoginSuccess]);
 
+  const countDownload = () => {
+    setCounts(counts + 1);
+
+    const parsedCount = parseInt(data?.down_count);
+    const totals = counts + parsedCount;
+
+    const form = new FormData();
+
+    form.append("id", data.id);
+    form.append("down_count", totals);
+
+    postDownCount(form)
+      .then((res) => {
+        console.log("success downcount", res);
+      })
+      .catch((err) => console.log("post downcount error", err));
+  };
+
   return (
     <Layout>
       <div className="flex justify-center h-screen items-center bg-gray-100">
@@ -312,14 +332,11 @@ const AdsDynamic = () => {
               <div className="mr-2 px-1 py-1 text-white bg-red-700 font-bold text-sm rounded-md">
                 {data?.file_size}
               </div>
-              <div className="mr-2 px-1 py-1 text-white bg-green-700 font-bold text-sm rounded-md">
-                N/A
-              </div>
               <div className="mr-2 px-1 py-1 text-white bg-sky-700 font-bold text-sm rounded-md">
                 {data?.mme_type === null ? "null" : data?.mime_type}
               </div>
               <div className="mr-2 px-1 py-1 text-white bg-blue-700 font-bold text-sm rounded-md">
-                0 Downloads
+                {data?.down_count} Downloads
               </div>
             </div>
             <div className="my-5 items-center flex justify-center">
@@ -385,6 +402,7 @@ const AdsDynamic = () => {
                         {showDownload ? (
                           <a
                             href={`https://drive.google.com/uc?id=${fileId}`}
+                            onClick={countDownload}
                             target="_blank"
                             className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
                           >
@@ -434,6 +452,7 @@ const AdsDynamic = () => {
                   {showDownload ? (
                     <a
                       href={`https://drive.google.com/uc?id=${fileId}`}
+                      onClick={countDownload}
                       target="_blank"
                       className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
                     >

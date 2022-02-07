@@ -1,19 +1,7 @@
-import React, { useEffect, useState, useContext } from "react";
+import React from "react";
 import Tooltip from "../tooltip/Tooltip";
-import { TableContext } from "../../pages/GDrive";
 
-const TableAction = ({ actionData }) => {
-  const [id, setId] = useState([]);
-  const [slug, setSlug] = useState("");
-  const slugData = useContext(TableContext);
-
-  useEffect(() => {
-    slugData?.map((data) => {
-      setId(data.id);
-      setSlug(data.slug);
-    });
-  }, []);
-
+const TableAction = ({ actionData, file }) => {
   return (
     <div className="inline-flex flex-nowrap justify-between items-center">
       {actionData.map((ac, index) => (
@@ -23,8 +11,8 @@ const TableAction = ({ actionData }) => {
               <ac.actionIcon
                 onClick={() =>
                   ac.actionName === "Delete"
-                    ? ac.actionHandle(id)
-                    : ac.actionHandle(slug)
+                    ? ac.actionHandle(file.id)
+                    : ac.actionHandle(file.slug)
                 }
               />
             </Tooltip>

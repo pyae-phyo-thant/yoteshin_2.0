@@ -1,4 +1,5 @@
 import React, { useEffect, useState, createContext } from "react";
+
 // Icon
 import { ImGoogleDrive } from "react-icons/im";
 import { MdOpenInNew } from "react-icons/md";
@@ -15,15 +16,10 @@ import Table from "../components/table/Table";
 import { getData } from "../function/api";
 import Loading from "../components/Loading";
 
-function createData(name, fileId, size, quality, download, createdDate) {
-  return [name, fileId, size, quality, download, createdDate];
-}
-
 const tableHeader = [
   "Name",
   "DriveID",
   "Size",
-  "Quality",
   "Download",
   "Added Time",
   "Actions",
@@ -35,7 +31,7 @@ function createAction(actionName, actionIcon, actionHandle) {
 export const TableContext = createContext();
 
 const GDrive = () => {
-  const [data, setData] = useState([]);
+  const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
@@ -46,6 +42,7 @@ const GDrive = () => {
   });
 
   const auth = gapi?.auth2.getAuthInstance();
+
   useEffect(() => {
     if (!auth) {
       history("/login");
@@ -53,8 +50,9 @@ const GDrive = () => {
     }
     getData(token, userId)
       .then((res) => {
-        setData(res.data);
+        setTableData(res.data);
         setLoading(false);
+        console.log(res, "data from api");
       })
       .catch((err) => {
         setLoading(false);
@@ -62,31 +60,8 @@ const GDrive = () => {
       });
   }, []);
 
-  // useEffect(() => {
-  //   if (!auth) {
-  //     history("/login");
-  //     setLoading(false);
-  //   }
-  // }, []);
-
-  const tableData = data.map((file) =>
-    createData(
-      file.name,
-      <a
-        target="_blank"
-        href={`https://drive.google.com/open?id=${file.file_id}`}
-        className="md:text-sky-600"
-      >
-        {file.file_id}
-      </a>,
-      file.file_size,
-      "N/A",
-      "0",
-      "1/31/2022"
-    )
-  );
-
   const handleDelete = (id) => {
+    console.log(id, "delete");
     axios
       .delete(`${import.meta.env.VITE_APP_API_URL}/delete?id=${id}`, {
         headers: {
@@ -97,7 +72,7 @@ const GDrive = () => {
       .then(() => {
         getData(token, userId)
           .then((res) => {
-            setData(res.data);
+            setTableData(res.data);
           })
           .catch((err) => console.log("get file data error", err));
       })
@@ -120,32 +95,30 @@ const GDrive = () => {
     createAction("Delete", BiTrash, handleDelete),
   ];
 
-  const tableActionData = data?.map((file) => file);
+  // const tableActionData = data?.map((file) => file);
+  // console.log(tableActionData);
 
   return (
     <>
       {loading ? (
-        <Loading />
+        <Loading width={"w-[8%] m-auto mt-40"} />
       ) : (
-        <>
+        <div className="p-10">
           <div className="flex items-center text-2xl font-semibold">
             <ImGoogleDrive className="mr-2 text-blue-500" />{" "}
             <h1>Google Drive</h1>
           </div>
 
           <div className="bg-white rounded-md my-10">
-            <TableContext.Provider value={tableActionData}>
-              <Table
-                tableHeader={tableHeader}
-                tableDataRow={tableData}
-                tableAction={tableAction}
-                rowLimit={10}
-                tableFilter={true}
-                handleDelete={handleDelete}
-              />
-            </TableContext.Provider>
+            <Table
+              tableHeader={tableHeader}
+              tableData={tableData}
+              tableAction={tableAction}
+              rowLimit={7}
+              tableFilter={true}
+            />
           </div>
-        </>
+        </div>
       )}
     </>
   );

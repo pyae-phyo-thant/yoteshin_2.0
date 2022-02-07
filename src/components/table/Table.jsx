@@ -15,20 +15,19 @@ const style = {
 
 const Table = ({
   rowLimit,
-  tableDataRow,
+  tableData,
   tableFilter,
   tableHeader,
   tableAction,
-  handleDelete,
 }) => {
   const [currentMinRow, setCurrentMinRow] = useState(0);
   const [currentMaxRow, setCurrentMaxRow] = useState(rowLimit);
-  const [resultData, setResultData] = useState(tableDataRow);
+  const [resultData, setResultData] = useState(tableData);
   const [isTableFilterOpen, setTableFilterOpen] = useState(false);
 
   useEffect(() => {
-    setResultData(tableDataRow);
-  }, [tableDataRow]);
+    setResultData(tableData);
+  }, [tableData]);
 
   const toggleTableFilter = () => {
     setTableFilterOpen(!isTableFilterOpen);
@@ -52,17 +51,23 @@ const Table = ({
     }
   };
   const loadLastData = () => {
-    if (currentMaxRow < resultData.length) {
-      setCurrentMinRow(resultData.length - (resultData.length % rowLimit));
-      setCurrentMaxRow(resultData.length);
+    if (currentMaxRow < resultData?.length) {
+      setCurrentMinRow(resultData?.length - (resultData?.length % rowLimit));
+      setCurrentMaxRow(resultData?.length);
     }
   };
+
   const filteredData = (query) => {
-    let data = tableDataRow.filter((tdr) =>
-      tdr.reduce((prev, next) => (prev + next).toLowerCase()).includes(query)
-    );
+    console.log(tableData);
+
+    let data = tableData.map((data) => {
+      data.name.filter((tdr) =>
+        tdr.reduce((prev, next) => (prev + next).toLowerCase()).includes(query)
+      );
+    });
     setResultData(data);
   };
+
   return (
     <div className="overflow-auto overflow-x-auto pb-10 text-sm md:border md:bg-white md:rounded-lg md:shadow-md md:pb-0">
       <div
@@ -86,27 +91,26 @@ const Table = ({
           loadPrevData={loadPrevData}
           loadFistData={loadFistData}
           loadLastData={loadLastData}
-          rowCount={resultData.length}
+          rowCount={resultData?.length}
           minRow={currentMinRow}
           maxRow={currentMaxRow}
         />
       </div>
       <div className="block md:table w-full">
         <TableHeader tableHeader={tableHeader} tableAction={tableAction} />
-        {resultData.length <= 0 ? (
-          <p className="p-3 text-lg">No Data Added.</p>
-        ) : (
-          resultData.slice(currentMinRow, currentMaxRow).map((row, index) => (
+        {resultData && resultData.length > 0 ? (
+          resultData?.slice(currentMinRow, currentMaxRow).map((row, index) => (
             <React.Fragment key={index}>
               <TableDataRow
                 tableHeader={tableHeader}
                 tableDataCol={row}
                 rowCount={index + currentMinRow + 1}
                 tableAction={tableAction}
-                handleDelete={handleDelete}
               />
             </React.Fragment>
           ))
+        ) : (
+          <p className="p-3 text-lg">No Data Added.</p>
         )}
       </div>
     </div>

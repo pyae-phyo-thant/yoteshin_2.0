@@ -1,20 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
+import defaultAvatar from "../../images/default_avatar.jpeg";
 
 const SidebarHeader = ({ sidebarState, toggleSidebar }) => {
+  const [email, setEmail] = useState("Your Gmail");
+  const avatar = localStorage.getItem("avatar");
+  useEffect(() => {
+    const localEmail = localStorage.getItem("email");
+    if (email.length > 18) {
+      setEmail(localEmail?.substring(0, 17));
+    } else {
+      setEmail(localEmail?.substring(0, 10) + "...");
+    }
+  }, []);
   return (
-    <div className="p-4 h-20 border-b flex items-center justify-between">
-      <div
-        className={`flex items-center flex-none ${
-          sidebarState ? "" : "hidden"
-        }`}
-      >
-        <img
-          src="https://images-na.ssl-images-amazon.com/images/I/51hKyr0it6L.png"
-          alt=""
-          className="object-center w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-gray-200 mr-2 md:mr-4"
-        />
-        <h1 className="text-lg md:text-xl font-bold">Version 1.0</h1>
+    <div className="p-4 h-[9rem] border-b flex justify-between">
+      <div className={`${sidebarState ? "" : "hidden"}`}>
+        {avatar ? (
+          <img
+            src={avatar}
+            alt=""
+            className="object-center w-8 h-8 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-gray-200 mr-2 md:mr-4"
+          />
+        ) : (
+          <img
+            src={defaultAvatar}
+            alt=""
+            className="object-center w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-gray-200 mr-2 md:mr-4"
+          />
+        )}
+        <h6 className="text-sm md:text-base font-bold">
+          {email ? email : "Your Gmail..."}
+        </h6>
       </div>
       <div
         className="hidden w-8 h-8 bg-gray-200 text-gray-600 rounded-full xl:flex flex-none hover:text-gray-800 transition-color duration-150 cursor-pointer"

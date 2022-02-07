@@ -14,10 +14,8 @@ const Login = () => {
   const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
 
   const onLoginSuccess = async (res) => {
-    console.log("Login Success from Google Login:", res);
     const avatar = await res.profileObj.imageUrl;
     const Gtoken = await res.accessToken;
-
     const form = new FormData();
 
     form.append("google_id", res.profileObj.googleId);
@@ -46,12 +44,12 @@ const Login = () => {
         localStorage.setItem("userId", res.data.data.id);
         localStorage.setItem("email", res.data.data.user_email);
         localStorage.setItem("name", res.data.data.user_name);
+        setShowloginButton(false);
       })
       .catch((err) => {
         console.log("send login data err", err);
       });
     history("/admin/dashboard");
-    setShowloginButton(false);
   };
 
   const onLoginFailure = (res) => {

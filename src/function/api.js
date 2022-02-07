@@ -19,3 +19,15 @@ export const getSingleData = async (name) => {
     }
   );
 };
+
+export const postDownCount = async (form) => {
+  return await axios.post(
+    `${import.meta.env.VITE_APP_API_URL}/down-count`,
+    form,
+    {
+      headers: {
+        "content-type": "application/json",
+      },
+    }
+  );
+};

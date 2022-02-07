@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiShare2 } from "react-icons/fi";
-import { AiOutlineFolderAdd } from "react-icons/ai";
+import { FiShare2, FiSave } from "react-icons/fi";
+import { AiOutlineFolderAdd, AiOutlineAppstoreAdd } from "react-icons/ai";
 import { FaGoogleDrive } from "react-icons/fa";
-import { MdAddCircleOutline } from "react-icons/md";
+import { BsFileEarmarkPlus } from "react-icons/bs";
+import { ImCancelCircle } from "react-icons/im";
 import { useGoogleApi } from "react-gapi";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -85,7 +86,7 @@ const GGenerator = () => {
           .post(`${import.meta.env.VITE_APP_API_URL}/add-file`, form, {
             headers: {
               "content-type": "application/json",
-              this_is_token: accessToken,
+              accessToken: accessToken,
             },
           })
           .then((res) => {
@@ -156,7 +157,7 @@ const GGenerator = () => {
   };
 
   return (
-    <>
+    <div className="p-10">
       <div className="flex items-center text-2xl font-semibold">
         <FiShare2 className="mr-2" /> <h1>Create Link</h1>
       </div>
@@ -198,7 +199,7 @@ const GGenerator = () => {
                 disabled={!multiText}
                 className="flex mr-3 items-center bg-green-500 hover:bg-green-800 text-white px-4 rounded-md py-1 float-right font-medium"
               >
-                <MdAddCircleOutline className="mr-2" />
+                <FiSave className="mr-2" />
                 {} Save
               </button>
             </>
@@ -224,7 +225,7 @@ const GGenerator = () => {
                 onClick={() => setMulti(false)}
                 className="flex mr-3 items-center bg-red-500 hover:bg-red-800 text-white px-4 rounded-md py-2 font-medium"
               >
-                <MdAddCircleOutline className="mr-2" />
+                <ImCancelCircle className="mr-2" />
                 {} Cancel
               </button>
               {save ? (
@@ -233,7 +234,7 @@ const GGenerator = () => {
                   disabled={!multiText}
                   className="flex items-center bg-sky-500 hover:bg-sky-800 text-white px-4 rounded-md py-2 font-medium"
                 >
-                  <MdAddCircleOutline className="mr-2" />
+                  <AiOutlineAppstoreAdd className="mr-2" />
                   {} Add all Video
                 </button>
               ) : (
@@ -245,13 +246,13 @@ const GGenerator = () => {
               onClick={sendSingleData}
               className="flex items-center bg-sky-500 hover:bg-sky-800 text-white px-4 rounded-md py-2 font-medium"
             >
-              <MdAddCircleOutline className="mr-2" />
+              <BsFileEarmarkPlus className="mr-2" />
               {} Add
             </button>
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

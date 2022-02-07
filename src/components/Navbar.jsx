@@ -88,7 +88,7 @@ const Navbar = () => {
 
   // md:flex-[0.5] flex-initial justify-center items-center
   return (
-    <nav className="w-full bg-[#2c2f48] flex md:justify-between justify-between items-center p-4">
+    <nav className="w-full bg-[rgba(30,41,59)] flex md:justify-between justify-between items-center py-2 px-4">
       <div className="">
         {/* <img src={logo} alt="logo" className="w-32 cursor-pointer" /> */}
         <Link to="/">
@@ -99,23 +99,7 @@ const Navbar = () => {
           />
         </Link>
       </div>
-      <ul className="text-white md:flex hidden list-none flex-row justify-between items-center flex-initial">
-        <li className={`mr-4 cursor-pointer md:text-base`}>
-          <Link to="/">Home</Link>
-        </li>
-        {authenticate &&
-          menu.map((item, index) => (
-            <React.Fragment key={index}>
-              <item.icon className="mr-2" />
-              <NarbarItem
-                key={item + index}
-                title={item.title}
-                classProps={undefined}
-                url={item.url}
-              />
-            </React.Fragment>
-          ))}
-
+      <ul className="text-white flex list-none flex-row justify-between items-center flex-initial">
         {authenticate ? (
           <li className="cursor-pointer items-center mx-4 md:text-base flex">
             <FiLogOut className="mr-2" />
@@ -142,75 +126,6 @@ const Navbar = () => {
           <img className="w-9 rounded-full ml-6" src={avatar} />
         </li>
       </ul>
-      <div className="flex md:hidden">
-        <div className="flex relative">
-          {toggleMenu ? (
-            <AiOutlineClose
-              fontSize={28}
-              className="text-white md:hidden cursor-pointer"
-              onClick={() => setToggleMenu(false)}
-            />
-          ) : (
-            <HiMenuAlt4
-              fontSize={28}
-              className="text-white md:hidden cursor-pointer"
-              onClick={() => setToggleMenu(true)}
-            />
-          )}
-          {toggleMenu && (
-            <ul
-              className="z-10 fixed top-0 -right-2 p-3 w-[70vw] h-screen shadow-2xl md:hidden list-none 
-          flex flex-col justify-start items-end rounded-mg blue-glassmorphism text-white animate-slide-in"
-            >
-              <li className="text-xl w-full my-2">
-                <AiOutlineClose
-                  onClick={() => setToggleMenu(false)}
-                  className="cursor-pointer"
-                />
-              </li>
-
-              {menu.map((item, index) => (
-                <div className="flex items-center" key={index}>
-                  <item.icon className="mr-2" />
-                  <NarbarItem
-                    key={item + index}
-                    title={item.title}
-                    classProps={"my-2 text-lg"}
-                  />
-                </div>
-              ))}
-            </ul>
-          )}
-        </div>
-        {authenticate && (
-          <img className="w-9 rounded-full ml-6 md:hidden" src={avatar} />
-        )}
-        {authenticate ? (
-          <li className="cursor-pointer items-center ml-2 md:text-base flex md:hidden">
-            <FiLogOut className="mr-2 text-white" />
-            <GoogleLogout
-              clientId={clientId}
-              onLogoutSuccess={onSignoutSuccess}
-              render={(renderProps) => (
-                <button
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                  className="text-white text-base"
-                >
-                  Logout
-                </button>
-              )}
-            />
-          </li>
-        ) : (
-          <li className="cursor-pointer items-center ml-2 md:text-base flex md:hidden">
-            <FiLogIn className="mr-2 text-white" />
-            <Link to="/login" className="text-white">
-              Login
-            </Link>
-          </li>
-        )}
-      </div>
     </nav>
   );
 };

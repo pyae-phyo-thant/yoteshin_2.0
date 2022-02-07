@@ -4,16 +4,16 @@ import { Route, Routes } from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
 import GDrive from "../pages/GDrive";
 import GGenerator from "../pages/GGenerator";
-import Login from "../pages/Login";
 import Settings from "../pages/Settings";
 import Home from "../pages/Home";
 
-import { AiOutlineDashboard } from "react-icons/ai";
+import { AiOutlineDashboard, AiOutlineUser } from "react-icons/ai";
 import { ImGoogleDrive } from "react-icons/im";
 import { FiShare, FiSettings } from "react-icons/fi";
 
 import Sidebar from "../components/sidebar/Sidebar";
 import Layout from "../components/Layout";
+import User from "../pages/User";
 
 const createMenuItem = (itemName, menuIcon, routeTo, subItems) => {
   return { itemName, menuIcon, routeTo, subItems };
@@ -23,20 +23,14 @@ const createMenuItem = (itemName, menuIcon, routeTo, subItems) => {
 // };
 const menuItems = [
   createMenuItem("Dashboard", AiOutlineDashboard, "/admin/dashboard", null),
-  createMenuItem("Google drive", ImGoogleDrive, "/admin/files", null),
+  createMenuItem("All Gdrive files", ImGoogleDrive, "/admin/files", null),
   createMenuItem(
-    "Link Generator",
+    "Links Generator",
     FiShare,
     "/admin/generate/google-drive",
     null
   ),
-  createMenuItem("Settings", FiSettings, "/admin/settings", null),
-
-  // createMenuItem("Visit Reg.", "clipboard-list", null, [
-  //   createSubMenuItem("Visit Reg. List", "list", "/visitRegList"),
-  //   createSubMenuItem("Visit Reg. Setup", "plus", "/visitRegSetup"),
-  // ]),
-  // createMenuItem("Sample Menu", "circle", "/sampleLink"),
+  createMenuItem("Account", AiOutlineUser, "/admin/account", null),
 ];
 export const ToggleSidebarContext = React.createContext();
 
@@ -50,17 +44,18 @@ const DashboardLayout = () => {
   return (
     <Layout>
       <ToggleSidebarContext.Provider value={toggleSidebar}>
-        <div className="md:flex bg-gray-100">
+        <div className="md:flex bg-gray-50">
           <Sidebar
             sidebarState={sidebarState}
             toggleSidebar={toggleSidebar}
             menuItems={menuItems}
           />
-          <div className="flex-grow lg:p-14 w-[95%] py-20">
+          <div className="flex-grow w-[80%]">
             <Routes>
               <Route exact path="/dashboard" element={<Dashboard />} />
               <Route path="/files" element={<GDrive />} />
               <Route path="/generate/google-drive" element={<GGenerator />} />
+              <Route path="/account" element={<User />} />
               <Route path="/settings" element={<Settings />} />
             </Routes>
           </div>
