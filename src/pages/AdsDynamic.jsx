@@ -290,9 +290,10 @@ const AdsDynamic = () => {
     var now = new Date().valueOf();
     setTimeout(function () {
       if (new Date().valueOf() - now > 100) return;
-      window.location = "https://itunes.apple.com/";
+      window.location = "https://play.google.com/store/apps";
     }, 25);
-    window.location = "appname://meta-mate://app";
+
+    window.location = `meta-mate://app/slug/${data.slug}`;
   };
 
   return (
