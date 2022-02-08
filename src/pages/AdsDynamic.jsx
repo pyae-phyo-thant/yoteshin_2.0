@@ -337,14 +337,14 @@ const AdsDynamic = () => {
             <h1 className="font-semibold text-base pb-4 break-all">
               {data?.name}
             </h1>
-            <div className="flex">
-              <div className="mr-2 px-1 py-1 text-white bg-red-700 font-bold text-sm rounded-md">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:w-[78%]">
+              <div className="mr-2 px-1 py-1 text-white bg-red-700 font-bold text-xs md:text-sm rounded-md">
                 {data?.file_size}
               </div>
-              <div className="mr-2 px-1 py-1 text-white bg-sky-700 font-bold text-sm rounded-md">
+              <div className="mr-2 px-1 py-1 text-white bg-sky-700 font-bold text-xs md:text-sm rounded-md">
                 {data?.mme_type === null ? "null" : data?.mime_type}
               </div>
-              <div className="mr-2 px-1 py-1 text-white bg-blue-700 font-bold text-sm rounded-md">
+              <div className="mr-2 px-1 py-1 text-white bg-blue-700 font-bold text-xs md:text-sm rounded-md">
                 {data?.down_count} Downloads
               </div>
             </div>
