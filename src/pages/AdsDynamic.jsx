@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { AiOutlineDownload, AiFillAndroid } from "react-icons/ai";
 import { ImGoogleDrive } from "react-icons/im";
 import { MdOutlineWebAsset } from "react-icons/md";
@@ -11,7 +10,7 @@ import driveImg from "../images/google-drive-logo.png";
 
 import { formatBytes } from "../function/formatBytes";
 import { getSingleData, postDownCount } from "../function/api";
-import SocialAuth from "../components/auth/SocialAuth";
+import UserAuth from "../components/auth/UserAuth";
 import Loading from "../components/Loading";
 import Layout from "../components/Layout";
 
@@ -34,10 +33,9 @@ const AdsDynamic = () => {
   const [useWeb, setUseWeb] = useState(false);
   const [limitExceed, setLimitExceed] = useState(false);
   const [error, setError] = useState(false);
+  const [appLink, setAppLink] = useState("");
 
   const [counts, setCounts] = useState(1);
-
-  const dispatch = useDispatch();
 
   const formatFree = formatBytes(limit - usage);
   const formatUsage = formatBytes(usage).toString();
@@ -68,46 +66,9 @@ const AdsDynamic = () => {
   };
 
   const onLoginSuccess = async (res) => {
-    console.log("Login Success:", res);
-    const avatar = await res.profileObj.imageUrl;
-    const Gtoken = await res.accessToken;
+    localStorage.setItem("user_avatar", res.profileObj.imageUrl);
+    console.log("login with google", res);
 
-    const form = new FormData();
-
-    form.append("google_id", res.profileObj.googleId);
-    form.append("image", res.profileObj.imageUrl);
-    form.append("token", res.accessToken);
-    form.append("user_email", res.profileObj.email);
-    form.append("user_name", res.profileObj.name);
-
-    axios
-      .post(`${import.meta.env.VITE_APP_API_URL}/login`, form, {
-        headers: {
-          "content-type": "application/json",
-        },
-      })
-      .then((res) => {
-        dispatch({
-          type: "LOGGED_IN_USER",
-          payload: {
-            name: res.data.data.user_name,
-            email: res.data.data.user_email,
-            image: res.data.data.image,
-            token: res.data.data.token,
-            google_id: res.data.data.googleId,
-          },
-        });
-        localStorage.setItem("token", res.data.data.token);
-        localStorage.setItem("Gtoken", Gtoken);
-        localStorage.setItem("avatar", avatar);
-        localStorage.setItem("userId", res.data.data.id);
-        localStorage.setItem("email", res.data.data.user_email);
-        localStorage.setItem("name", res.data.data.user_name);
-        console.log("login with google", res);
-      })
-      .catch((err) => {
-        console.log("token err", err);
-      });
     setShowloginButton(false);
   };
   const onLoginFailure = (res) => {
@@ -325,6 +286,15 @@ const AdsDynamic = () => {
       .catch((err) => console.log("post downcount error", err));
   };
 
+  const openApp = () => {
+    var now = new Date().valueOf();
+    setTimeout(function () {
+      if (new Date().valueOf() - now > 100) return;
+      window.location = "https://itunes.apple.com/";
+    }, 25);
+    window.location = "appname://meta-mate://app";
+  };
+
   return (
     <Layout>
       <div className="flex justify-center md:h-screen items-center bg-gray-100 p-[53px]">
@@ -363,7 +333,8 @@ const AdsDynamic = () => {
                         className="bg-green-500 text-white rounded-md px-10  py-1 font-bold my-4 md:my-6 flex items-center m-auto"
                       >
                         <AiFillAndroid className="mr-2" />
-                        <span>Open in App</span>
+                        {""}
+                        <span onClick={openApp}>Open in App</span>
                       </button>
                       <button
                         onClick={() => setUseWeb(true)}
@@ -400,7 +371,7 @@ const AdsDynamic = () => {
                             </button>
                           </>
                         ) : (
-                          <SocialAuth
+                          <UserAuth
                             showloginButton={showloginButton}
                             clientId={clientId}
                             onLoginSuccess={onLoginSuccess}
@@ -422,7 +393,7 @@ const AdsDynamic = () => {
                         )}
                       </>
                     ) : (
-                      <SocialAuth
+                      <UserAuth
                         showloginButton={showloginButton}
                         clientId={clientId}
                         onLoginSuccess={onLoginSuccess}
@@ -472,7 +443,7 @@ const AdsDynamic = () => {
                   )}
                 </>
               ) : (
-                <SocialAuth
+                <UserAuth
                   showloginButton={showloginButton}
                   clientId={clientId}
                   onLoginSuccess={onLoginSuccess}

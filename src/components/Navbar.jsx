@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  AiOutlineDashboard,
-  AiOutlineSetting,
-  AiOutlineUser,
-} from "react-icons/ai";
+import { AiOutlineDashboard } from "react-icons/ai";
 import { FiLogOut, FiLogIn, FiShare } from "react-icons/fi";
 import { GoogleLogout } from "react-google-login";
-import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useGoogleApi } from "react-gapi";
+import { getUser } from "../function/api";
 
 const NarbarItem = ({ title, classProps, url }) => {
   return (
@@ -18,71 +14,59 @@ const NarbarItem = ({ title, classProps, url }) => {
   );
 };
 
-const menu = [
-  {
-    title: "Dashboard",
-    icon: AiOutlineDashboard,
-    url: "/admin/dashboard",
-  },
-  {
-    title: "Generator",
-    icon: FiShare,
-    url: "/admin/generate/google-drive",
-  },
-  {
-    title: "Settings",
-    icon: AiOutlineSetting,
-    url: "/admin/settings",
-  },
-  {
-    title: "My Account",
-    icon: AiOutlineUser,
-    url: "/user",
-  },
-];
-
 const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
 
 const Navbar = () => {
-  const [toggleMenu, setToggleMenu] = useState(false);
   const [authenticate, setAuthenticate] = useState(false);
-  const dispatch = useDispatch();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [avatar, setAvatar] = useState("");
+  const [userAvatar, setUserAvatar] = useState("");
   const history = useNavigate();
+  const token = localStorage.getItem("admin_token");
+  const userId = localStorage.getItem("admin_userId");
+  const adminAvatar = localStorage.getItem("admin_avatar");
+  const uAvatar = localStorage.getItem("user_avatar");
   const location = window.location.pathname.slice(0, 6);
   const gapi = useGoogleApi({
     scopes: ["profile"],
   });
 
   const auth = gapi?.auth2.getAuthInstance();
+
   useEffect(() => {
     if (auth?.isSignedIn.get()) {
       setAuthenticate(true);
+      setAvatar(adminAvatar);
+      setUserAvatar(uAvatar);
     } else {
       setAuthenticate(false);
     }
-  }, [auth]);
-  const onSignoutSuccess = () => {
-    dispatch({
-      type: "LOGOUT",
-      payload: null,
+  }, []);
+
+  useEffect(() => {
+    getUser(token, userId).then((res) => {
+      if (res.data.data && res.data.data.is_admin === true) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
     });
+  });
+
+  const onSignoutSuccess = () => {
     gapi.auth2.getAuthInstance().signOut();
-    localStorage.removeItem("token");
-    localStorage.removeItem("avatar");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("Gtoken");
-    localStorage.removeItem("email");
-    localStorage.removeItem("name");
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_avatar");
+    localStorage.removeItem("user_avatar");
+    localStorage.removeItem("admin_userId");
+    localStorage.removeItem("admin_Gtoken");
+    localStorage.removeItem("admin_email");
+    localStorage.removeItem("admin_name");
     console.clear();
     if (location === "/admin") {
       history("/login");
     }
   };
-
-  useEffect(() => {
-    setAvatar(localStorage.getItem("avatar"));
-  }, [auth]);
 
   // md:flex-[0.5] flex-initial justify-center items-center
   return (
@@ -115,21 +99,28 @@ const Navbar = () => {
                 )}
               />
             </li>
-            {location !== "/admin" && (
-              <li className="cursor-pointer items-center mx-4 md:text-base flex">
-                <AiOutlineDashboard className="mr-2" />
-                <Link to="/admin/dashboard">Dashboard</Link>
-              </li>
-            )}
+            {isAdmin
+              ? location !== "/admin" && (
+                  <li className="cursor-pointer items-center mx-4 md:text-base flex">
+                    <AiOutlineDashboard className="mr-2" />
+                    <Link to="/admin/dashboard">Dashboard</Link>
+                  </li>
+                )
+              : ""}
           </>
         ) : (
-          <li className="cursor-pointer items-center mx-4 md:text-base flex">
-            <FiLogIn className="mr-2" />
-            <Link to="/login">Login</Link>
-          </li>
+          <>
+            <li className="cursor-pointer items-center mx-4 md:text-base flex">
+              <FiLogIn className="mr-2" />
+              <Link to="/login">Admin Login</Link>
+            </li>
+          </>
         )}
         <li>
-          <img className="w-9 rounded-full ml-6" src={avatar} />
+          <img
+            className="w-9 rounded-full ml-6"
+            src={avatar ? avatar : userAvatar}
+          />
         </li>
       </ul>
     </nav>

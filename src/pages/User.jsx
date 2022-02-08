@@ -73,8 +73,8 @@ const User = () => {
   };
   useEffect(() => {
     getDriveStorage();
-    setName(localStorage.getItem("name"));
-    setEmail(localStorage.getItem("email"));
+    setName(localStorage.getItem("admin_name"));
+    setEmail(localStorage.getItem("admin_email"));
   }, []);
 
   return (

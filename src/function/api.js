@@ -9,6 +9,15 @@ export const getData = async (token, userId) => {
   });
 };
 
+export const getUser = async (token, userId) => {
+  return await axios.get(`${import.meta.env.VITE_APP_API_URL}/get-user`, {
+    headers: {
+      accessToken: token,
+      id: userId,
+    },
+  });
+};
+
 export const getSingleData = async (name) => {
   return await axios.get(
     `${import.meta.env.VITE_APP_API_URL}/drive?slug=${name}`,

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -10,7 +9,6 @@ import { login } from "../function/auth";
 const Login = () => {
   const [showloginButton, setShowloginButton] = useState(true);
   const history = useNavigate();
-  const dispatch = useDispatch();
   const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
 
   const onLoginSuccess = async (res) => {
@@ -21,29 +19,20 @@ const Login = () => {
     form.append("google_id", res.profileObj.googleId);
     form.append("image", res.profileObj.imageUrl);
     form.append("token", res.accessToken);
-    form.append("user_email", res.profileObj.email);
+    form.append("admin_email", res.profileObj.email);
     form.append("user_name", res.profileObj.name);
+    form.append("is_admin", true);
 
     login(form)
       .then((res) => {
-        dispatch({
-          type: "LOGGED_IN_USER",
-          payload: {
-            name: res.data.data.user_name,
-            email: res.data.data.user_email,
-            image: res.data.data.image,
-            token: res.data.data.token,
-            google_id: res.data.data.googleId,
-          },
-        });
         console.log("data from api", res);
 
-        localStorage.setItem("token", res.data.data.token);
-        localStorage.setItem("Gtoken", Gtoken);
-        localStorage.setItem("avatar", avatar);
-        localStorage.setItem("userId", res.data.data.id);
-        localStorage.setItem("email", res.data.data.user_email);
-        localStorage.setItem("name", res.data.data.user_name);
+        localStorage.setItem("admin_token", res.data.data.token);
+        localStorage.setItem("admin_Gtoken", Gtoken);
+        localStorage.setItem("admin_avatar", avatar);
+        localStorage.setItem("admin_userId", res.data.data.id);
+        localStorage.setItem("admin_email", res.data.data.user_email);
+        localStorage.setItem("admin_name", res.data.data.user_name);
         setShowloginButton(false);
       })
       .catch((err) => {

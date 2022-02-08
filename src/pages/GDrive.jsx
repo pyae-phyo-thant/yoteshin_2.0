@@ -33,8 +33,8 @@ export const TableContext = createContext();
 const GDrive = () => {
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("admin_token");
+  const userId = localStorage.getItem("admin_userId");
   const history = useNavigate();
 
   const gapi = useGoogleApi({

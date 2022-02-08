@@ -41,9 +41,9 @@ const Dashboard = () => {
   const ref = useRef();
   const copyRef = useRef();
   const history = useNavigate();
-  const accessToken = localStorage.getItem("token");
-  const gAccessToken = localStorage.getItem("Gtoken");
-  const userId = localStorage.getItem("userId");
+  const accessToken = localStorage.getItem("admin_token");
+  const gAccessToken = localStorage.getItem("admin_Gtoken");
+  const userId = localStorage.getItem("admin_userId");
 
   const baseURL = import.meta.env.VITE_APP_BASE_URL;
   const gApiKey = import.meta.env.VITE_APP_GOOGLE_API_KEY;
@@ -159,6 +159,7 @@ const Dashboard = () => {
   };
   useEffect(() => {
     getData(accessToken, userId).then((res) => {
+      console.log(res);
       if (res.data) {
         setTotalLinks(res.data.length);
 

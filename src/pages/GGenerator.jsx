@@ -16,12 +16,12 @@ const GGenerator = () => {
   const [ids, setIds] = useState([]);
   const [datas, setDatas] = useState([]);
   const [multiText, setMultiText] = useState("");
-  const accessToken = localStorage.getItem("token");
   const history = useNavigate();
   const singleRef = useRef();
   const multiRef = useRef();
-  const gAccessToken = localStorage.getItem("Gtoken");
-  const userId = localStorage.getItem("userId");
+  const accessToken = localStorage.getItem("admin_token");
+  const gAccessToken = localStorage.getItem("admin_Gtoken");
+  const userId = localStorage.getItem("admin_userId");
 
   const baseURL = import.meta.env.VITE_APP_BASE_URL;
   const gApiKey = import.meta.env.VITE_APP_GOOGLE_API_KEY;

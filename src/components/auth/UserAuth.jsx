@@ -1,0 +1,31 @@
+import React from "react";
+
+import { GoogleLogin } from "react-google-login";
+
+const UserAuth = ({
+  showloginButton,
+  clientId,
+  onLoginSuccess,
+  onLoginFailure,
+}) => {
+  return (
+    <>
+      {showloginButton ? (
+        <div className="text-center">
+          <GoogleLogin
+            clientId={clientId}
+            buttonText="Sign in with Google"
+            onSuccess={onLoginSuccess}
+            onFailure={onLoginFailure}
+            cookiePolicy={"single_host_origin"}
+            isSignedIn={true}
+            scope="profile email https://www.googleapis.com/auth/drive"
+            className="font-bold"
+          />
+        </div>
+      ) : null}
+    </>
+  );
+};
+
+export default UserAuth;
