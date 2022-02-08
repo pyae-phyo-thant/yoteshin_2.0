@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { AiOutlineDownload } from "react-icons/ai";
+import { AiOutlineDownload, AiFillAndroid } from "react-icons/ai";
 import { ImGoogleDrive } from "react-icons/im";
+import { MdOutlineWebAsset } from "react-icons/md";
 import { useGoogleApi } from "react-gapi";
 
 import driveImg from "../images/google-drive-logo.png";
@@ -32,6 +33,7 @@ const AdsDynamic = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [useWeb, setUseWeb] = useState(false);
   const [limitExceed, setLimitExceed] = useState(false);
+  const [error, setError] = useState(false);
 
   const [counts, setCounts] = useState(1);
 
@@ -43,16 +45,15 @@ const AdsDynamic = () => {
 
   useEffect(() => {
     getDataFromSlug();
-    setInterval(() => {
-      setPageLoading(false);
-    }, 1000);
   }, []);
 
   const getDataFromSlug = async () => {
     await getSingleData(params.name)
       .then((res) => {
         setData(res.data.data);
-        console.log(res, "data from url");
+        setInterval(() => {
+          setPageLoading(false);
+        }, 1000);
       })
       .catch((err) => {
         console.log("url data err", err);
@@ -209,7 +210,6 @@ const AdsDynamic = () => {
                 })
                 .catch((err) => console.log("creating permission error", err));
               // Create a file in above folder
-              console.log("folderId", res.result);
               const fileMetadata = {
                 name: data.name,
                 parents: [res.result.id],
@@ -236,6 +236,10 @@ const AdsDynamic = () => {
                     setLimitExceed(true);
                   }
                   setSaveLoading(false);
+
+                  if (err.status === 404) {
+                    setError(true);
+                  }
 
                   console.log("create err file in folder", err);
                 });
@@ -270,6 +274,9 @@ const AdsDynamic = () => {
                 setLimitExceed(true);
               }
               setSaveLoading(false);
+              if (err.status === 404) {
+                setError(true);
+              }
               console.log("create err file in folder", err);
             });
         }
@@ -320,14 +327,16 @@ const AdsDynamic = () => {
 
   return (
     <Layout>
-      <div className="flex justify-center h-screen items-center bg-gray-100">
+      <div className="flex justify-center md:h-screen items-center bg-gray-100 p-[53px]">
         {pageLoading ? (
           <div className="mt-[70px] w-[7%]">
             <Loading />
           </div>
         ) : (
           <div className="bg-white rounded-md px-4 py-5">
-            <h1 className="font-semibold text-base pb-4">{data?.name}</h1>
+            <h1 className="font-semibold text-base pb-4 break-all">
+              {data?.name}
+            </h1>
             <div className="flex">
               <div className="mr-2 px-1 py-1 text-white bg-red-700 font-bold text-sm rounded-md">
                 {data?.file_size}
@@ -339,7 +348,7 @@ const AdsDynamic = () => {
                 {data?.down_count} Downloads
               </div>
             </div>
-            <div className="my-5 items-center flex justify-center">
+            <div className="my-5 items-center flex justify-center w-[25%] m-auto md:w-full">
               <img src={driveImg} alt="Google Drive" className="md:w-1/5" />
             </div>
             {
@@ -351,16 +360,16 @@ const AdsDynamic = () => {
                     <>
                       <button
                         onClick={saveToDrive}
-                        className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                        className="bg-green-500 text-white rounded-md px-10  py-1 font-bold my-4 md:my-6 flex items-center m-auto"
                       >
-                        <ImGoogleDrive className="mr-2" />
+                        <AiFillAndroid className="mr-2" />
                         <span>Open in App</span>
                       </button>
                       <button
                         onClick={() => setUseWeb(true)}
-                        className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                        className="bg-green-500 text-white rounded-md px-6 py-1 font-bold my-4 md:my-6 flex items-center m-auto"
                       >
-                        <ImGoogleDrive className="mr-2" />
+                        <MdOutlineWebAsset className="mr-2" />
                         <span>Download on Web</span>
                       </button>
                     </>
@@ -477,6 +486,13 @@ const AdsDynamic = () => {
               <p className="text-red-600 text-center text-sm">
                 Not enough space to save in your Google drive. <br /> Please
                 delete some file and reload the page.
+              </p>
+            ) : (
+              ""
+            )}
+            {error ? (
+              <p className="text-red-600 text-center text-sm">
+                File not found from uploader.
               </p>
             ) : (
               ""
