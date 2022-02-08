@@ -60,6 +60,29 @@ const Dashboard = () => {
     }
   }, []);
 
+  //------ Filter is mobile or not
+  useEffect(() => {
+    /* Storing user's device details in a variable*/
+    let details = navigator.userAgent;
+
+    /* Creating a regular expression 
+       containing some mobile devices keywords 
+       to search it in details string*/
+    let regexp = /android|iphone|kindle|ipad/i;
+
+    /* Using test() method to search regexp in details
+       it returns boolean value*/
+    let isMobileDevice = regexp.test(details);
+
+    if (isMobileDevice) {
+      alert(
+        "Please open via laptop or desktop to get full experience of app. Otherwise you can not move to other pages."
+      );
+    } else {
+      console.log("desktop");
+    }
+  }, []);
+
   const onChangeState = (e) => {
     setShare(e.target.value);
   };

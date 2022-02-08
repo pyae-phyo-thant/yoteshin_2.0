@@ -15,17 +15,17 @@ const Sidebar = ({ sidebarState, toggleSidebar, menuItems }) => {
   return (
     <div
       className={`transition-all duration-75 flex-none relative ${
-        sidebarState ? "xl:w-64" : "xl:w-16"
+        sidebarState ? "md:w-64 w-40" : "md:w-16 w-8"
       }`}
     >
       <div
-        className={`fixed flex top-0 w-screen h-screen z-30 xl:sticky xl:w-full xl:h-auto xl:z-0 transform xl:translate-x-0 transition-all duration-150 xl:transition-none xl:duration-0 ${
+        className={`fixed md:flex top-0 w-screen h-screen z-30 md:sticky md:w-full md:h-auto md:z-0 transform md:translate-x-0 transition-all duration-150 md:transition-none md:duration-0 ${
           sidebarState ? "left-0" : "-translate-x-full"
         }`}
       >
         <div
           style={style.backdropBlur}
-          className="overflow-x-hidden overflow-y-auto mx-w-full w-64 xl:w-auto h-screen border-r flex-none flex-grow"
+          className="overflow-x-hidden overflow-y-auto mx-w-full w-64 md:w-auto h-screen border-r flex-none flex-grow"
         >
           <SidebarHeader
             sidebarState={sidebarState}
@@ -42,7 +42,7 @@ const Sidebar = ({ sidebarState, toggleSidebar, menuItems }) => {
           ))}
         </div>
         <div
-          className={`w-full h-screen bg-gray-900 xl:hidden ${
+          className={`w-full h-screen bg-gray-900 md:hidden ${
             sidebarState
               ? "opacity-25 transition-all duration-1000"
               : "opacity-0"
