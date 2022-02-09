@@ -318,7 +318,7 @@ const AdsDynamic = () => {
             </div>
             <div className="md:col-span-3 col-span-1">
               <br />
-              <div className="grid grid-rows-3 grid-flow-col gap-4">
+              <div className="grid md:grid-rows-3 md:grid-flow-col gap-4">
                 <div className="bg-[#f0ce60] rounded-md px-4 py-5 row-span-2 col-span-2">
                   <h1 className="font-semibold text-base text-white pb-4 break-all">
                     {data?.name}
@@ -513,7 +513,7 @@ const AdsDynamic = () => {
                     </>
                   )}
                 </div>
-                <div className="ml-[70px]">
+                <div className="ml-[70px] w-[131%] md:w-full">
                   <img src="https://channelmyanmar.org/wp-content/uploads/2020/10/sexy-gaming.gif" />
                 </div>
               </div>
