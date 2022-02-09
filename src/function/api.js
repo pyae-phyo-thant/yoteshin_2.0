@@ -40,3 +40,20 @@ export const postDownCount = async (form) => {
     }
   );
 };
+
+export const postAds = async (token, userId, form) => {
+  return await axios.post(`${import.meta.env.VITE_APP_API_URL}/ads`, form, {
+    headers: {
+      accessToken: token,
+      id: userId,
+    },
+  });
+};
+
+export const getAds = async (userId) => {
+  return await axios.get(`${import.meta.env.VITE_APP_API_URL}/ads`, {
+    headers: {
+      id: userId,
+    },
+  });
+};

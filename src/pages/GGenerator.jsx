@@ -9,6 +9,7 @@ import { useGoogleApi } from "react-gapi";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { formatBytes } from "../function/formatBytes";
+import { getUser } from "../function/api";
 
 const GGenerator = () => {
   const [multi, setMulti] = useState(false);

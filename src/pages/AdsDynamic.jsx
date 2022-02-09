@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-import { AiOutlineDownload, AiFillAndroid } from "react-icons/ai";
+import { AiOutlineDownload } from "react-icons/ai";
 import { ImGoogleDrive } from "react-icons/im";
-import { MdOutlineWebAsset } from "react-icons/md";
 import { useGoogleApi } from "react-gapi";
-
-import driveImg from "../images/google-drive-logo.png";
 
 import { formatBytes } from "../function/formatBytes";
 import { getSingleData, postDownCount } from "../function/api";
@@ -49,6 +45,7 @@ const AdsDynamic = () => {
     await getSingleData(params.name)
       .then((res) => {
         setData(res.data.data);
+        console.log(res.data);
         setInterval(() => {
           setPageLoading(false);
         }, 1000);
