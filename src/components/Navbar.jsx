@@ -20,7 +20,7 @@ const Navbar = () => {
   const [authenticate, setAuthenticate] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [avatar, setAvatar] = useState("");
-  const [userAvatar, setUserAvatar] = useState("");
+  const [isUser, setIsUser] = useState(false);
   const history = useNavigate();
   const token = localStorage.getItem("admin_token");
   const userId = localStorage.getItem("admin_userId");
@@ -37,11 +37,10 @@ const Navbar = () => {
     if (auth?.isSignedIn.get()) {
       setAuthenticate(true);
       setAvatar(adminAvatar);
-      setUserAvatar(uAvatar);
     } else {
       setAuthenticate(false);
     }
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     getUser(token, userId).then((res) => {
@@ -51,6 +50,11 @@ const Navbar = () => {
         setIsAdmin(false);
       }
     });
+    if (uAvatar) {
+      setIsUser(true);
+    } else {
+      setIsUser(false);
+    }
   });
 
   const onSignoutSuccess = () => {
@@ -63,6 +67,7 @@ const Navbar = () => {
     localStorage.removeItem("admin_email");
     localStorage.removeItem("admin_name");
     console.clear();
+
     if (location === "/admin") {
       history("/login");
     }
@@ -70,7 +75,7 @@ const Navbar = () => {
 
   // md:flex-[0.5] flex-initial justify-center items-center
   return (
-    <nav className="w-full bg-[rgba(30,41,59)] flex md:justify-between justify-between items-center py-2 px-4">
+    <nav className="w-full bg-[#f0ce60] flex md:justify-between justify-between items-center py-2 px-4">
       <div className="">
         {/* <img src={logo} alt="logo" className="w-32 cursor-pointer" /> */}
         <Link to="/">
@@ -110,18 +115,14 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <li className="cursor-pointer items-center mx-4 md:text-base flex">
-              <FiLogIn className="mr-2" />
-              <Link to="/login">Admin Login</Link>
-            </li>
+            {!isAdmin && (
+              <li className="cursor-pointer items-center mx-4 md:text-base flex">
+                <FiLogIn className="mr-2" />
+                <Link to="/login">Admin Login</Link>
+              </li>
+            )}
           </>
         )}
-        <li>
-          <img
-            className="w-9 rounded-full ml-6"
-            src={avatar ? avatar : userAvatar}
-          />
-        </li>
       </ul>
     </nav>
   );

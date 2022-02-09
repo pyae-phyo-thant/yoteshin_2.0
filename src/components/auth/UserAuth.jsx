@@ -11,7 +11,7 @@ const UserAuth = ({
   return (
     <>
       {showloginButton ? (
-        <div className="text-center">
+        <div className="text-center md:mt-20 mt-15">
           <GoogleLogin
             clientId={clientId}
             buttonText="Sign in with Google"

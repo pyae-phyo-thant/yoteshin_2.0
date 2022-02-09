@@ -14,6 +14,8 @@ const User = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(true);
+  const accessToken = localStorage.getItem("admin_token");
+  const userId = localStorage.getItem("admin_userId");
 
   const formatUsage = formatBytes(usage);
   const formatFree = formatBytes(limit - usage);
@@ -36,6 +38,15 @@ const User = () => {
       history("/login");
     }
   }, []);
+
+  useEffect(() => {
+    getUser(accessToken, userId).then((res) => {
+      if (res.data.data && res.data.data.is_admin !== true) {
+        history("/");
+      }
+    });
+  });
+
   useEffect(() => {
     calculatePercent();
   }, [usage, limit]);

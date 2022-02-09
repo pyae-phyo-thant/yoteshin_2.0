@@ -11,7 +11,7 @@ import { BiCopy } from "react-icons/bi";
 import loadingButton from "../images/loading_red.gif";
 
 import { formatBytes } from "../function/formatBytes";
-import { getData } from "../function/api";
+import { getData, getUser } from "../function/api";
 
 import {
   Chart as ChartJS,
@@ -59,6 +59,14 @@ const Dashboard = () => {
       history("/login");
     }
   }, []);
+
+  useEffect(() => {
+    getUser(accessToken, userId).then((res) => {
+      if (res.data.data && res.data.data.is_admin !== true) {
+        history("/");
+      }
+    });
+  });
 
   //------ Filter is mobile or not
   useEffect(() => {

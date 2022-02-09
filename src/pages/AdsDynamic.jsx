@@ -287,67 +287,135 @@ const AdsDynamic = () => {
   };
 
   const openApp = () => {
-    var now = new Date().valueOf();
-    setTimeout(function () {
-      if (new Date().valueOf() - now > 100) return;
+    // var now = new Date().valueOf();
+    // setTimeout(function () {
+    //   if (new Date().valueOf() - now > 100) return;
+    // }, 25);
+    const isApp = "meta-mate://";
+    if (isApp) {
+      window.location = `meta-mate://app/slug/${data.slug}`;
+    } else {
       window.location = "https://play.google.com/store/apps";
-    }, 25);
-
-    window.location = `meta-mate://app/slug/${data.slug}`;
+    }
   };
 
   return (
     <Layout>
-      <div className="flex justify-center md:h-screen items-center bg-gray-100 p-[53px]">
+      <div className="grid md:grid-cols-5 grid-rows-1 gap-4 md:h-screen items-center bg-white pt-[30px] md:pt-0 pb-[10px] px-[27px]">
         {pageLoading ? (
           <div className="mt-[70px] w-[7%]">
             <Loading />
           </div>
         ) : (
-          <div className="bg-white rounded-md px-4 py-5">
-            <h1 className="font-semibold text-base pb-4 break-all">
-              {data?.name}
-            </h1>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:w-[78%]">
-              <div className="mr-2 px-1 py-1 text-white bg-red-700 font-bold text-xs md:text-sm rounded-md">
-                {data?.file_size}
-              </div>
-              <div className="mr-2 px-1 py-1 text-white bg-sky-700 font-bold text-xs md:text-sm rounded-md">
-                {data?.mme_type === null ? "null" : data?.mime_type}
-              </div>
-              <div className="mr-2 px-1 py-1 text-white bg-blue-700 font-bold text-xs md:text-sm rounded-md">
-                {data?.down_count} Downloads
-              </div>
+          <>
+            <div className={`${isMobile ? "hidden" : "block"}`}>
+              <a href="lee">
+                <img
+                  className="m-auto"
+                  src="https://channelmyanmar.org/wp-content/uploads/2020/07/mmbus_ads_4.png"
+                />
+              </a>
             </div>
-            <div className="my-5 items-center flex justify-center w-[25%] m-auto md:w-full">
-              <img src={driveImg} alt="Google Drive" className="md:w-1/5" />
-            </div>
-            {
-              isMobile ? (
-                <>
-                  {useWeb ? (
-                    ""
-                  ) : (
-                    <>
-                      <button
-                        onClick={saveToDrive}
-                        className="bg-green-500 text-white rounded-md px-10  py-1 font-bold my-4 md:my-6 flex items-center m-auto"
-                      >
-                        <AiFillAndroid className="mr-2" />
-                        {""}
-                        <span onClick={openApp}>Open in App</span>
-                      </button>
-                      <button
-                        onClick={() => setUseWeb(true)}
-                        className="bg-green-500 text-white rounded-md px-6 py-1 font-bold my-4 md:my-6 flex items-center m-auto"
-                      >
-                        <MdOutlineWebAsset className="mr-2" />
-                        <span>Download on Web</span>
-                      </button>
-                    </>
-                  )}
-                  {useWeb ? (
-                    loading ? (
+            <div className="md:col-span-3 col-span-1">
+              <br />
+              <div className="grid grid-rows-3 grid-flow-col gap-4">
+                <div className="bg-[#f0ce60] rounded-md px-4 py-5 row-span-2 col-span-2">
+                  <h1 className="font-semibold text-base text-white pb-4 break-all">
+                    {data?.name}
+                  </h1>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:w-[78%] m-auto">
+                    <div className="mr-2 px-1 py-1 text-yellow-400 bg-red-500 font-bold text-xs text-center md:text-sm rounded-md">
+                      {data?.file_size}
+                    </div>
+                    <div className="mr-2 px-1 py-1 text-yellow-400 bg-blue-800 font-bold text-xs text-center md:text-sm rounded-md">
+                      {data?.mme_type === null ? "null" : data?.mime_type}
+                    </div>
+                    <div className="mr-2 px-1 py-1 text-yellow-400 bg-purple-800 font-bold text-xs text-center md:text-sm rounded-md">
+                      {data?.down_count} Downloads
+                    </div>
+                  </div>
+                  {
+                    isMobile ? (
+                      <>
+                        {useWeb ? (
+                          ""
+                        ) : (
+                          <>
+                            <button
+                              onClick={saveToDrive}
+                              className="bg-green-500 text-white rounded-md px-6 py-1 font-bold mt-16 mb-2 flex items-center m-auto"
+                            >
+                              <span onClick={openApp}>Download with App</span>
+                            </button>
+                            <button
+                              onClick={() => setUseWeb(true)}
+                              className="bg-green-500 text-white rounded-md px-6 py-1 font-bold my-4 md:my-6 flex items-center m-auto"
+                            >
+                              <span>Download from Web</span>
+                            </button>
+                          </>
+                        )}
+                        {useWeb ? (
+                          loading ? (
+                            <div className="w-[10%] m-auto">
+                              <Loading />
+                            </div>
+                          ) : authState ? (
+                            <>
+                              {showSave ? (
+                                <>
+                                  <button
+                                    onClick={saveToDrive}
+                                    className="bg-green-500 text-white rounded-md px-6 py-2 font-bold md:mt-16 mt-20 mb-2 flex items-center m-auto"
+                                  >
+                                    <ImGoogleDrive className="mr-2" />
+                                    <span>
+                                      {saveLoading
+                                        ? "Loading"
+                                        : "Save to Google Drive"}
+                                    </span>
+                                  </button>
+                                  <p className="md:text-center font-bold text-xs text-white mb-3">
+                                    Save this file to your google drive account
+                                    to download
+                                  </p>
+                                </>
+                              ) : (
+                                <UserAuth
+                                  showloginButton={showloginButton}
+                                  clientId={clientId}
+                                  onLoginSuccess={onLoginSuccess}
+                                  onLoginFailure={onLoginFailure}
+                                />
+                              )}
+
+                              {showDownload ? (
+                                <a
+                                  href={`https://drive.google.com/uc?id=${fileId}`}
+                                  onClick={countDownload}
+                                  target="_blank"
+                                  className="bg-blue-500 md:w-[48%] text-white rounded-md px-6 py-1 font-bold md:mt-16 mt-20 mb-2 flex items-center m-auto"
+                                >
+                                  <AiOutlineDownload className="mr-2" />{" "}
+                                  Download Now
+                                </a>
+                              ) : (
+                                ""
+                              )}
+                            </>
+                          ) : (
+                            <UserAuth
+                              showloginButton={showloginButton}
+                              clientId={clientId}
+                              onLoginSuccess={onLoginSuccess}
+                              onLoginFailure={onLoginFailure}
+                            />
+                          )
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    ) : loading ? (
                       <div className="w-[10%] m-auto">
                         <Loading />
                       </div>
@@ -355,13 +423,9 @@ const AdsDynamic = () => {
                       <>
                         {showSave ? (
                           <>
-                            <p className="text-center font-semibold">
-                              Save this file to your google drive account to
-                              download
-                            </p>
                             <button
                               onClick={saveToDrive}
-                              className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                              className="bg-green-500 text-white rounded-md px-8 py-2 font-bold md:mt-16 mb-2 flex items-center m-auto"
                             >
                               <ImGoogleDrive className="mr-2" />
                               <span>
@@ -370,14 +434,13 @@ const AdsDynamic = () => {
                                   : "Save to Google Drive"}
                               </span>
                             </button>
+                            <p className="md:text-center font-bold text-xs text-white mb-3">
+                              Save this file to your google drive account to
+                              download
+                            </p>
                           </>
                         ) : (
-                          <UserAuth
-                            showloginButton={showloginButton}
-                            clientId={clientId}
-                            onLoginSuccess={onLoginSuccess}
-                            onLoginFailure={onLoginFailure}
-                          />
+                          ""
                         )}
 
                         {showDownload ? (
@@ -385,7 +448,7 @@ const AdsDynamic = () => {
                             href={`https://drive.google.com/uc?id=${fileId}`}
                             onClick={countDownload}
                             target="_blank"
-                            className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
+                            className="bg-blue-500 md:w-[48%] text-white rounded-md px-6 py-1 md:mt-16 font-bold my-6 flex items-center m-auto"
                           >
                             <AiOutlineDownload className="mr-2" /> Download Now
                           </a>
@@ -401,105 +464,74 @@ const AdsDynamic = () => {
                         onLoginFailure={onLoginFailure}
                       />
                     )
+
+                    //
+                  }
+                  {limitExceed ? (
+                    <p className="text-red-600 text-center text-xs">
+                      Not enough space to save in your Google drive. <br />{" "}
+                      Please delete some file and reload the page.
+                    </p>
                   ) : (
                     ""
                   )}
-                </>
-              ) : loading ? (
-                <div className="w-[10%] m-auto">
-                  <Loading />
-                </div>
-              ) : authState ? (
-                <>
-                  {showSave ? (
+                  {error ? (
+                    <p className="text-red-600 text-center text-xs">
+                      File not found from uploader.
+                    </p>
+                  ) : (
+                    ""
+                  )}
+                  {showSpace && (
                     <>
-                      <p className="text-center font-semibold">
-                        Save this file to your google drive account to download
-                      </p>
-                      <button
-                        onClick={saveToDrive}
-                        className="bg-green-500 text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
-                      >
-                        <ImGoogleDrive className="mr-2" />
-                        <span>
-                          {saveLoading ? "Loading" : "Save to Google Drive"}
+                      <div className="border-t border-b border-gray-400">
+                        <span className="px-4 text-xs md:text-sm">
+                          Free space: {formatFree}
                         </span>
-                      </button>
-                    </>
-                  ) : (
-                    ""
-                  )}
-
-                  {showDownload ? (
-                    <a
-                      href={`https://drive.google.com/uc?id=${fileId}`}
-                      onClick={countDownload}
-                      target="_blank"
-                      className="bg-blue-500 md:w-[48%] text-white rounded-md px-8 py-2 font-bold my-6 flex items-center m-auto"
-                    >
-                      <AiOutlineDownload className="mr-2" /> Download Now
-                    </a>
-                  ) : (
-                    ""
-                  )}
-                </>
-              ) : (
-                <UserAuth
-                  showloginButton={showloginButton}
-                  clientId={clientId}
-                  onLoginSuccess={onLoginSuccess}
-                  onLoginFailure={onLoginFailure}
-                />
-              )
-
-              //
-            }
-            {limitExceed ? (
-              <p className="text-red-600 text-center text-sm">
-                Not enough space to save in your Google drive. <br /> Please
-                delete some file and reload the page.
-              </p>
-            ) : (
-              ""
-            )}
-            {error ? (
-              <p className="text-red-600 text-center text-sm">
-                File not found from uploader.
-              </p>
-            ) : (
-              ""
-            )}
-            {showSpace && (
-              <>
-                <div className="border-t border-b border-gray-400">
-                  <span className="px-4 text-sm">Free space: {formatFree}</span>
-                  <div className="relative pt-1 px-4">
-                    <div className="overflow-hidden h-4 mb-4 text-xs flex rounded bg-blue-200">
-                      <div
-                        style={{ width: `${percent}%` }}
-                        className="shadow-none flex font-semibold flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
-                      >
-                        {formatUsage}
+                        <div className="relative pt-1 px-4">
+                          <div className="overflow-hidden h-4 mb-4 text-xs flex rounded bg-blue-200">
+                            <div
+                              style={{ width: `${percent}%` }}
+                              className="shadow-none flex font-semibold flex-col text-center whitespace-nowrap text-black justify-center bg-blue-500"
+                            >
+                              {formatUsage}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                      <p className="md:text-sm text-xs p-2">
+                        If your drive is full,{" "}
+                        <a
+                          href="https://drive.google.com"
+                          target="_blank"
+                          className="text-blue-600"
+                        >
+                          click here{" "}
+                        </a>
+                        to go to your google drive and delete some files.
+                      </p>
+                    </>
+                  )}
                 </div>
-                <p className="text-sm p-2">
-                  If your drive is full,{" "}
-                  <a
-                    href="https://drive.google.com"
-                    target="_blank"
-                    className="text-blue-600"
-                  >
-                    click here{" "}
-                  </a>
-                  to go to your google drive and delete some files.
-                </p>
-              </>
-            )}
-          </div>
+                <div className="ml-[70px]">
+                  <img src="https://channelmyanmar.org/wp-content/uploads/2020/10/sexy-gaming.gif" />
+                </div>
+              </div>
+            </div>
+            <div className={`${isMobile ? "hidden" : "block"}`}>
+              <a href="lee">
+                <img
+                  className="m-auto"
+                  src="https://channelmyanmar.org/wp-content/uploads/2020/07/mmbus_ads_4.png"
+                />
+              </a>
+            </div>
+          </>
         )}
       </div>
+      {/* <div className="h-1/3">
+        <img src="https://channelmyanmar.org/wp-content/uploads/2020/10/sexy-gaming.gif" />
+      </div> */}
     </Layout>
   );
 };

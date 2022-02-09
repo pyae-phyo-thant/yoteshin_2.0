@@ -52,6 +52,15 @@ const GGenerator = () => {
       history("/login");
     }
   }, []);
+
+  useEffect(() => {
+    getUser(accessToken, userId).then((res) => {
+      if (res.data.data && res.data.data.is_admin !== true) {
+        history("/");
+      }
+    });
+  });
+
   const gapiDrive = useGoogleApi({
     discoveryDocs: [
       "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",

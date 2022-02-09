@@ -13,7 +13,7 @@ import { useGoogleApi } from "react-gapi";
 //Component
 import Table from "../components/table/Table";
 //Function
-import { getData } from "../function/api";
+import { getData, getUser } from "../function/api";
 import Loading from "../components/Loading";
 
 const tableHeader = [
@@ -59,6 +59,14 @@ const GDrive = () => {
         console.log("get file data error", err);
       });
   }, []);
+
+  useEffect(() => {
+    getUser(token, userId).then((res) => {
+      if (res.data.data && res.data.data.is_admin !== true) {
+        history("/");
+      }
+    });
+  });
 
   const handleDelete = (id) => {
     console.log(id, "delete");
