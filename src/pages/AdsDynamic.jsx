@@ -80,10 +80,7 @@ const AdsDynamic = () => {
     discoveryDocs: [
       "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
     ],
-    scopes: [
-      "https://www.googleapis.com/auth/drive.metadata.readonly",
-      "https://www.googleapis.com/auth/drive.file",
-    ],
+    scopes: ["https://www.googleapis.com/auth/drive"],
   });
 
   const gapi = useGoogleApi({
@@ -298,10 +295,10 @@ const AdsDynamic = () => {
       window.location = "https://play.google.com/store/apps";
     }
   };
-
+  // grid md:grid-cols-4 grid-rows-1
   return (
     <Layout>
-      <div className="grid md:grid-cols-5 grid-rows-1 gap-4 md:h-screen items-center bg-white pt-[30px] md:pt-0 pb-[10px] px-[27px]">
+      <div className="flex justify-between gap-4 min-h-screen md:mt-14  bg-white pt-[30px] md:pt-0 pb-[10px] px-[27px]">
         {pageLoading ? (
           <div className="mt-[70px] w-[7%]">
             <Loading />
@@ -311,16 +308,15 @@ const AdsDynamic = () => {
             <div className={`${isMobile ? "hidden" : "block"}`}>
               <a href="lee">
                 <img
-                  className="m-auto"
+                  className="m-auto w-full"
                   src="https://channelmyanmar.org/wp-content/uploads/2020/07/mmbus_ads_4.png"
                 />
               </a>
             </div>
-            <div className="md:col-span-3 col-span-1">
-              <br />
-              <div className="grid md:grid-rows-3 md:grid-flow-col gap-4">
+            <div className="md:col-span-2 md:w-[52%] col-span-1">
+              <div className=" gap-4">
                 <div className="bg-[#f0ce60] rounded-md px-4 py-5 row-span-2 col-span-2">
-                  <h1 className="font-semibold text-base text-white pb-4 break-all">
+                  <h1 className="font-semibold md:text-xl text-base text-white pb-4 break-all">
                     {data?.name}
                   </h1>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:w-[78%] m-auto">
@@ -394,7 +390,7 @@ const AdsDynamic = () => {
                                   href={`https://drive.google.com/uc?id=${fileId}`}
                                   onClick={countDownload}
                                   target="_blank"
-                                  className="bg-blue-500 md:w-[48%] text-white rounded-md px-6 py-1 font-bold md:mt-16 mt-20 mb-2 flex items-center m-auto"
+                                  className="bg-blue-500 md:w-[48%] text-white rounded-md px-14 w-fit py-1 font-bold md:mt-16 mt-20 mb-2 flex items-center m-auto"
                                 >
                                   <AiOutlineDownload className="mr-2" />{" "}
                                   Download Now
@@ -448,7 +444,7 @@ const AdsDynamic = () => {
                             href={`https://drive.google.com/uc?id=${fileId}`}
                             onClick={countDownload}
                             target="_blank"
-                            className="bg-blue-500 md:w-[48%] text-white rounded-md px-6 py-1 md:mt-16 font-bold my-6 flex items-center m-auto"
+                            className="bg-blue-500 md:w-[48%] text-white rounded-md px-16 w-fit py-1 md:mt-16 font-bold my-6 flex items-center m-auto"
                           >
                             <AiOutlineDownload className="mr-2" /> Download Now
                           </a>
@@ -513,7 +509,7 @@ const AdsDynamic = () => {
                     </>
                   )}
                 </div>
-                <div className="ml-[70px] w-[131%] md:w-full">
+                <div className="md:mt-10 mt-5 md:w-full">
                   <img src="https://channelmyanmar.org/wp-content/uploads/2020/10/sexy-gaming.gif" />
                 </div>
               </div>
