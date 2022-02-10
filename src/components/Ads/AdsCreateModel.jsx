@@ -3,11 +3,9 @@ import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -44,7 +42,7 @@ const BootstrapDialogTitle = (props) => {
   );
 };
 
-const AdsModel = ({
+const AdsCreateModel = ({
   open,
   handleClose,
   sizeError,
@@ -79,7 +77,7 @@ const AdsModel = ({
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Create your Ads
+          Update your Ads
         </BootstrapDialogTitle>
         <h6 className="text-base pl-4">For Leftside Ad</h6>
         <input
@@ -172,7 +170,7 @@ const AdsModel = ({
         {/* <input type="text" placeholder="Your Ads Owner Url" value={bSize1} onChange={(e) => setBsize1(e.target.value)} /> */}
         <DialogActions>
           <Button autoFocus onClick={handleCreateAds}>
-            Create
+            Update
           </Button>
         </DialogActions>
       </BootstrapDialog>
@@ -180,4 +178,4 @@ const AdsModel = ({
   );
 };
 
-export default AdsModel;
+export default AdsCreateModel;
