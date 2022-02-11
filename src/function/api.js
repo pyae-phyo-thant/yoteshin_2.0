@@ -57,3 +57,13 @@ export const getAds = async (userId) => {
     },
   });
 };
+
+export const updateAds = async (token, userId, form) => {
+  return await axios.put(`${import.meta.env.VITE_APP_API_URL}/ads`, form, {
+    headers: {
+      "content-type": "application/x-www-form-urlencoded",
+      accessToken: token,
+      id: userId,
+    },
+  });
+};

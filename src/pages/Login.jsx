@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useGoogleApi } from "react-gapi";
 
 import SocialAuth from "../components/auth/SocialAuth";
 import Layout from "../components/Layout";
@@ -9,17 +10,31 @@ import { login } from "../function/auth";
 const Login = () => {
   const [showloginButton, setShowloginButton] = useState(true);
   const history = useNavigate();
+  const token = localStorage.getItem("admin_token");
   const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
+
+  const gapi = useGoogleApi({
+    scopes: ["profile"],
+  });
+
+  const auth = gapi?.auth2.getAuthInstance();
+
+  useEffect(() => {
+    if (token && auth?.isSignedIn.get()) {
+      history("/admin/dashboard");
+    }
+  }, [auth]);
 
   const onLoginSuccess = async (res) => {
     const avatar = await res.profileObj.imageUrl;
     const Gtoken = await res.accessToken;
     const form = new FormData();
+    console.log("Login with gmail", res.profileObj.email);
 
     form.append("google_id", res.profileObj.googleId);
     form.append("image", res.profileObj.imageUrl);
     form.append("token", res.accessToken);
-    form.append("admin_email", res.profileObj.email);
+    form.append("user_email", res.profileObj.email);
     form.append("user_name", res.profileObj.name);
     form.append("is_admin", true);
 

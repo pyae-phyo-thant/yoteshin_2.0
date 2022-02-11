@@ -4,13 +4,16 @@ import defaultAvatar from "../../images/default_avatar.jpeg";
 
 const SidebarHeader = ({ sidebarState, toggleSidebar }) => {
   const [email, setEmail] = useState("Your Gmail");
-  const avatar = localStorage.getItem("avatar");
+  const avatar = localStorage.getItem("admin_avatar");
+
   useEffect(() => {
-    const localEmail = localStorage.getItem("email");
+    const localEmail = localStorage.getItem("admin_email");
     if (email.length > 18) {
       setEmail(localEmail?.substring(0, 17));
+    } else if (email.length > 10) {
+      setEmail(localEmail?.substring(0, 8) + "...");
     } else {
-      setEmail(localEmail?.substring(0, 10) + "...");
+      setEmail(localEmail?.substring(0, 5) + "...");
     }
   }, []);
   return (

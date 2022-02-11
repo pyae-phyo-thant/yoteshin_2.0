@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGoogleApi } from "react-gapi";
 
-import Layout from "../components/Layout";
 import { formatBytes } from "../function/formatBytes";
+import { getUser } from "../function/api";
 import Loading from "../components/Loading";
 
 const User = () => {
@@ -13,7 +13,7 @@ const User = () => {
   const [percent, setPercent] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const accessToken = localStorage.getItem("admin_token");
   const userId = localStorage.getItem("admin_userId");
 
@@ -37,7 +37,7 @@ const User = () => {
     if (!auth?.isSignedIn.get()) {
       history("/login");
     }
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     getUser(accessToken, userId).then((res) => {
@@ -45,7 +45,7 @@ const User = () => {
         history("/");
       }
     });
-  });
+  }, []);
 
   useEffect(() => {
     calculatePercent();
@@ -55,15 +55,12 @@ const User = () => {
     discoveryDocs: [
       "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
     ],
-    scopes: [
-      "https://www.googleapis.com/auth/drive.metadata.readonly",
-      "https://www.googleapis.com/auth/drive.file",
-    ],
+    scopes: ["https://www.googleapis.com/auth/drive"],
   });
 
   const getDriveStorage = () => {
     if (auth?.isSignedIn.get()) {
-      gapi?.client?.drive?.about
+      gapi?.client?.drive.about
         .get({
           fields: "storageQuota",
         })
@@ -83,6 +80,7 @@ const User = () => {
     }
   };
   useEffect(() => {
+    gapi;
     getDriveStorage();
     setName(localStorage.getItem("admin_name"));
     setEmail(localStorage.getItem("admin_email"));

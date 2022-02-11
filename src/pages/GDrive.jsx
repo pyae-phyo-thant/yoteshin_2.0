@@ -44,10 +44,12 @@ const GDrive = () => {
   const auth = gapi?.auth2.getAuthInstance();
 
   useEffect(() => {
-    if (!auth) {
+    if (!auth?.isSignedIn.get()) {
       history("/login");
       setLoading(false);
     }
+  }, [auth]);
+  useEffect(() => {
     getData(token, userId)
       .then((res) => {
         setTableData(res.data);
@@ -61,12 +63,14 @@ const GDrive = () => {
   }, []);
 
   useEffect(() => {
-    getUser(token, userId).then((res) => {
-      if (res.data.data && res.data.data.is_admin !== true) {
-        history("/");
-      }
-    });
-  });
+    if (token) {
+      getUser(token, userId).then((res) => {
+        if (res.data.data && res.data.data.is_admin !== true) {
+          history("/");
+        }
+      });
+    }
+  }, []);
 
   const handleDelete = (id) => {
     console.log(id, "delete");

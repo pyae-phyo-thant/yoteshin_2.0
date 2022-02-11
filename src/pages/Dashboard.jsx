@@ -58,15 +58,20 @@ const Dashboard = () => {
     if (!auth?.isSignedIn.get()) {
       history("/login");
     }
-  }, []);
+    if (!accessToken) {
+      alert("Your don't have accessToken please Login Again!");
+      history("/login");
+    }
+  }, [auth]);
 
   useEffect(() => {
     getUser(accessToken, userId).then((res) => {
       if (res.data.data && res.data.data.is_admin !== true) {
         history("/");
       }
+      console.log(res);
     });
-  });
+  }, []);
 
   //------ Filter is mobile or not
   useEffect(() => {
@@ -171,7 +176,7 @@ const Dashboard = () => {
       if (res.data) {
         setTotalLinks(res.data.length);
 
-        const total = res.data.reduce(
+        const total = res?.data.reduce(
           (n, { down_count }) => n + parseInt(down_count),
           0
         );

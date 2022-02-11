@@ -18,9 +18,6 @@ const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
 
 const Navbar = () => {
   const [authenticate, setAuthenticate] = useState(false);
-  const history = useNavigate();
-  const location = window.location.pathname.slice(0, 6);
-
   const gapi = useGoogleApi({
     scopes: ["profile"],
   });
@@ -45,17 +42,11 @@ const Navbar = () => {
     localStorage.removeItem("admin_email");
     localStorage.removeItem("admin_name");
     console.clear();
-
-    if (location === "/admin") {
-      history("/login");
-    }
   };
 
-  // md:flex-[0.5] flex-initial justify-center items-center
   return (
     <nav className="w-full bg-[#f0ce60] flex md:justify-between justify-between items-center py-2 px-4">
       <div className="">
-        {/* <img src={logo} alt="logo" className="w-32 cursor-pointer" /> */}
         <Link to="/">
           <img
             src="https://images-na.ssl-images-amazon.com/images/I/51hKyr0it6L.png"
@@ -65,7 +56,7 @@ const Navbar = () => {
         </Link>
       </div>
       <ul className="text-white flex list-none flex-row justify-between items-center flex-initial">
-        {authenticate ? (
+        {authenticate && (
           <>
             <li className="cursor-pointer items-center mx-4 md:text-base flex">
               <FiLogOut className="mr-2" />
@@ -81,19 +72,6 @@ const Navbar = () => {
                   </button>
                 )}
               />
-            </li>
-            {location !== "/admin" && (
-              <li className="cursor-pointer items-center mx-4 md:text-base flex">
-                <AiOutlineDashboard className="mr-2" />
-                <Link to="/admin/dashboard">Dashboard</Link>
-              </li>
-            )}
-          </>
-        ) : (
-          <>
-            <li className="cursor-pointer items-center mx-4 md:text-base flex">
-              <FiLogIn className="mr-2" />
-              <Link to="/login">Admin Login</Link>
             </li>
           </>
         )}

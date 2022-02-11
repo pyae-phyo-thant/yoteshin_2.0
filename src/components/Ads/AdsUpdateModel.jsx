@@ -64,7 +64,7 @@ const AdsUpdateModel = ({
   check1,
   check2,
   check3,
-  handleCreateAds,
+  handleUpdateAds,
 }) => {
   return (
     <div>
@@ -77,7 +77,7 @@ const AdsUpdateModel = ({
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Create your Ads
+          Update your Ads
         </BootstrapDialogTitle>
         <h6 className="text-base pl-4">For Leftside Ad</h6>
         <input
@@ -165,8 +165,8 @@ const AdsUpdateModel = ({
         />
         <br />
         <DialogActions>
-          <Button autoFocus onClick={handleCreateAds}>
-            Create
+          <Button autoFocus onClick={handleUpdateAds}>
+            Update
           </Button>
         </DialogActions>
       </BootstrapDialog>

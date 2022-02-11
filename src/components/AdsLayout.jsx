@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "./Navbar";
+import AdsNavbar from "./AdsNavbar";
 import Footer from "./Footer";
 import Loading from "./Loading";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const Layout = ({ children }) => {
+const AdsLayout = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const Layout = ({ children }) => {
     <Loading width={"w-[7%] m-auto mt-10"} />
   ) : (
     <>
-      <Navbar />
+      <AdsNavbar />
       <ToastContainer />
       <div className="min-h-screen relative w-full h-full bg-gray-100">
         {children}
@@ -29,4 +29,4 @@ const Layout = ({ children }) => {
   );
 };
 
-export default Layout;
+export default AdsLayout;

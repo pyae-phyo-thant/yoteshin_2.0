@@ -4,7 +4,7 @@ import { useGoogleApi } from "react-gapi";
 import { useNavigate } from "react-router-dom";
 import reactImageSize from "react-image-size";
 
-import { getAds, getUser, postAds } from "../function/api";
+import { getAds, getUser, postAds, updateAds } from "../function/api";
 import AdsUpdateModel from "../components/Ads/AdsUpdateModel";
 import Loading from "../components/Loading";
 import AdsCreateModel from "../components/Ads/AdsCreateModel";
@@ -112,17 +112,50 @@ const Ads = () => {
     form.append("banner_image", bannerImg);
     form.append("banner_url", bannerUrl);
 
-    if (check1 && check2 && check3 !== true) {
-      return alert("Your image must be right size.");
+    if (check1 === false) {
+      alert("Please check Leftside Ad image");
+    } else if (check2 === false) {
+      alert("Please check Rightside Ad image");
+    } else if (check3 === false) {
+      alert("Please check Bottom Ad image");
+    } else {
+      postAds(accessToken, userId, form)
+        .then((res) => {
+          console.log(res, "success create ads");
+        })
+        .catch((err) => {
+          console.log("fail create ads", err);
+        });
     }
+  };
+  const handleUpdateAds = () => {
+    // const form = new FormData();
+    const params = new URLSearchParams();
 
-    postAds(accessToken, userId, form)
-      .then((res) => {
-        console.log(res, "success create ads");
-      })
-      .catch((err) => {
-        console.log("fail create ads", err);
-      });
+    params.append("id", allAds.id);
+    params.append("bsize1_image", bSizeImg1);
+    params.append("bsize1_url", bSizeUrl1);
+    params.append("bsize2_image", bSizeImg2);
+    params.append("bsize2_url", bSizeUrl2);
+    params.append("banner_image", bannerImg);
+    params.append("banner_url", bannerUrl);
+
+    if (check1 === false) {
+      alert("Please check Leftside Ad image");
+    } else if (check2 === false) {
+      alert("Please check Rightside Ad image");
+    } else if (check3 === false) {
+      alert("Please check Bottom Ad image");
+    } else {
+      updateAds(accessToken, userId, params)
+        .then((res) => {
+          console.log(res, "success update ads");
+          setAllAds(res.data.data);
+        })
+        .catch((err) => {
+          console.log("fail create ads", err);
+        });
+    }
   };
 
   const getAdsApi = () => {
@@ -259,7 +292,7 @@ const Ads = () => {
             setBannerImg={setBannerImg}
             bannerUrl={bannerUrl}
             setBannerUrl={setBannerUrl}
-            handleCreateAds={handleCreateAds}
+            handleUpdateAds={handleUpdateAds}
             checkImageSize1={checkImageSize1}
             checkImageSize2={checkImageSize2}
             checkImageSize3={checkImageSize3}

@@ -27,6 +27,7 @@ const TableDataRow = ({
         <span className="font-bold mr-3 text-gray-700 md:hidden">DriveID</span>
         <a
           href={`https://drive.google.com/open?id=${tableDataCol.file_id}`}
+          target="_blank"
           className="text-blue-500"
         >
           {tableDataCol.file_id}

@@ -49,10 +49,10 @@ const GGenerator = () => {
   };
 
   useEffect(() => {
-    if (!auth) {
+    if (!auth?.isSignedIn.get()) {
       history("/login");
     }
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     getUser(accessToken, userId).then((res) => {

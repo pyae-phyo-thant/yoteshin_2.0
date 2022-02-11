@@ -5,10 +5,10 @@ import { ImGoogleDrive } from "react-icons/im";
 import { useGoogleApi } from "react-gapi";
 
 import { formatBytes } from "../function/formatBytes";
-import { getSingleData, postDownCount } from "../function/api";
+import { getAds, getSingleData, postDownCount } from "../function/api";
 import UserAuth from "../components/auth/UserAuth";
 import Loading from "../components/Loading";
-import Layout from "../components/Layout";
+import AdsLayout from "../components/AdsLayout";
 
 const AdsDynamic = () => {
   const params = useParams();
@@ -29,7 +29,7 @@ const AdsDynamic = () => {
   const [useWeb, setUseWeb] = useState(false);
   const [limitExceed, setLimitExceed] = useState(false);
   const [error, setError] = useState(false);
-  const [appLink, setAppLink] = useState("");
+  const [allAds, setAllAds] = useState({});
 
   const [counts, setCounts] = useState(1);
 
@@ -45,7 +45,6 @@ const AdsDynamic = () => {
     await getSingleData(params.name)
       .then((res) => {
         setData(res.data.data);
-        console.log(res.data);
         setInterval(() => {
           setPageLoading(false);
         }, 1000);
@@ -63,7 +62,8 @@ const AdsDynamic = () => {
   };
 
   const onLoginSuccess = async (res) => {
-    localStorage.setItem("user_avatar", res.profileObj.imageUrl);
+    localStorage.setItem("admin_name", res.profileObj.name);
+    localStorage.setItem("admin_email", res.profileObj.email);
     console.log("login with google", res);
 
     setShowloginButton(false);
@@ -77,7 +77,7 @@ const AdsDynamic = () => {
     discoveryDocs: [
       "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
     ],
-    scopes: ["https://www.googleapis.com/auth/drive"],
+    scopes: ["profile email https://www.googleapis.com/auth/drive"],
   });
 
   const gapi = useGoogleApi({
@@ -86,6 +86,7 @@ const AdsDynamic = () => {
 
   const auth = gapi?.auth2.getAuthInstance();
 
+  //Get G Drive storage when mount
   const getDriveStorage = () => {
     if (auth?.isSignedIn.get()) {
       gapiDrive?.client?.drive.about
@@ -126,6 +127,7 @@ const AdsDynamic = () => {
     }
   }, []);
 
+  //------ Create if not exist and Permission and Copy to Drive
   const saveToDrive = async () => {
     setSaveLoading(true);
     const folderMetadata = {
@@ -292,9 +294,19 @@ const AdsDynamic = () => {
       window.location = "https://play.google.com/store/apps";
     }
   };
-  // grid md:grid-cols-4 grid-rows-1
+
+  const getOwnerAds = () => {
+    getAds(data && data.admin_id)
+      .then((res) => {
+        setAllAds(res.data.data);
+      })
+      .catch((err) => console.log("getOwnerAds err", err));
+  };
+  useEffect(() => {
+    getOwnerAds();
+  }, [data]);
   return (
-    <Layout>
+    <AdsLayout>
       <div className="flex justify-between gap-4 min-h-screen md:mt-14  bg-white pt-[30px] md:pt-0 pb-[10px] px-[27px]">
         {pageLoading ? (
           <div className="mt-[70px] w-[7%]">
@@ -303,10 +315,10 @@ const AdsDynamic = () => {
         ) : (
           <>
             <div className={`${isMobile ? "hidden" : "block"}`}>
-              <a href="lee">
+              <a href={allAds && allAds.bsize1_url}>
                 <img
                   className="m-auto w-full"
-                  src="https://channelmyanmar.org/wp-content/uploads/2020/07/mmbus_ads_4.png"
+                  src={allAds && allAds.bsize1_image}
                 />
               </a>
             </div>
@@ -507,25 +519,21 @@ const AdsDynamic = () => {
                   )}
                 </div>
                 <div className="md:mt-10 mt-5 md:w-full">
-                  <img src="https://channelmyanmar.org/wp-content/uploads/2020/10/sexy-gaming.gif" />
+                  <a href={allAds && allAds.banner_url}>
+                    <img src={allAds && allAds.banner_image} />
+                  </a>
                 </div>
               </div>
             </div>
             <div className={`${isMobile ? "hidden" : "block"}`}>
-              <a href="lee">
-                <img
-                  className="m-auto"
-                  src="https://channelmyanmar.org/wp-content/uploads/2020/07/mmbus_ads_4.png"
-                />
+              <a href={allAds && allAds.bsize2_url}>
+                <img className="m-auto" src={allAds && allAds.bsize2_image} />
               </a>
             </div>
           </>
         )}
       </div>
-      {/* <div className="h-1/3">
-        <img src="https://channelmyanmar.org/wp-content/uploads/2020/10/sexy-gaming.gif" />
-      </div> */}
-    </Layout>
+    </AdsLayout>
   );
 };
 

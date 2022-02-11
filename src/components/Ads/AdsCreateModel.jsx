@@ -77,7 +77,7 @@ const AdsCreateModel = ({
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Update your Ads
+          Create your Ads
         </BootstrapDialogTitle>
         <h6 className="text-base pl-4">For Leftside Ad</h6>
         <input
@@ -170,7 +170,7 @@ const AdsCreateModel = ({
         {/* <input type="text" placeholder="Your Ads Owner Url" value={bSize1} onChange={(e) => setBsize1(e.target.value)} /> */}
         <DialogActions>
           <Button autoFocus onClick={handleCreateAds}>
-            Update
+            Create
           </Button>
         </DialogActions>
       </BootstrapDialog>
