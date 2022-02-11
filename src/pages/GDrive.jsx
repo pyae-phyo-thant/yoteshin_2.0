@@ -48,6 +48,10 @@ const GDrive = () => {
       history("/login");
       setLoading(false);
     }
+    if (!token) {
+      alert("Your don't have accessToken please Login Again!");
+      history("/login");
+    }
   }, [auth]);
   useEffect(() => {
     getData(token, userId)

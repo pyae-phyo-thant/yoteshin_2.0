@@ -31,7 +31,15 @@ const GGenerator = () => {
   });
 
   const auth = gapi?.auth2.getAuthInstance();
-
+  useEffect(() => {
+    if (!auth?.isSignedIn.get()) {
+      history("/login");
+    }
+    if (!accessToken) {
+      alert("Your don't have accessToken please Login Again!");
+      history("/login");
+    }
+  }, [auth]);
   const handleMultiSave = (e) => {
     e.preventDefault();
     const lines = multiRef.current?.value.split(/\n/);
@@ -47,12 +55,6 @@ const GGenerator = () => {
       setSave(true);
     }
   };
-
-  useEffect(() => {
-    if (!auth?.isSignedIn.get()) {
-      history("/login");
-    }
-  }, [auth]);
 
   useEffect(() => {
     getUser(accessToken, userId).then((res) => {

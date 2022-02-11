@@ -196,6 +196,8 @@ const AdsDynamic = () => {
 
                   if (err.status === 404) {
                     setError(true);
+                  } else {
+                    setError(false);
                   }
 
                   console.log("create err file in folder", err);
@@ -233,6 +235,8 @@ const AdsDynamic = () => {
               setSaveLoading(false);
               if (err.status === 404) {
                 setError(true);
+              } else {
+                setError(false);
               }
               console.log("create err file in folder", err);
             });
@@ -399,7 +403,7 @@ const AdsDynamic = () => {
                                   href={`https://drive.google.com/uc?id=${fileId}`}
                                   onClick={countDownload}
                                   target="_blank"
-                                  className="bg-blue-500 md:w-[48%] text-white rounded-md px-14 w-fit py-1 font-bold md:mt-16 mt-20 mb-2 flex items-center m-auto"
+                                  className="bg-blue-500 text-white rounded-md px-14 w-fit py-1 font-bold mt-20 mb-2 flex items-center m-auto"
                                 >
                                   <AiOutlineDownload className="mr-2" />{" "}
                                   Download Now
@@ -453,7 +457,7 @@ const AdsDynamic = () => {
                             href={`https://drive.google.com/uc?id=${fileId}`}
                             onClick={countDownload}
                             target="_blank"
-                            className="bg-blue-500 md:w-[48%] text-white rounded-md px-16 w-fit py-1 md:mt-16 font-bold my-6 flex items-center m-auto"
+                            className="bg-blue-500 text-white rounded-md px-16 w-fit py-1 mt-20 font-bold my-6 flex items-center m-auto"
                           >
                             <AiOutlineDownload className="mr-2" /> Download Now
                           </a>

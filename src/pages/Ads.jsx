@@ -39,7 +39,11 @@ const Ads = () => {
     if (!auth?.isSignedIn.get()) {
       history("/login");
     }
-  }, []);
+    if (!accessToken) {
+      alert("Your don't have accessToken please Login Again!");
+      history("/login");
+    }
+  }, [auth]);
 
   useEffect(() => {
     getUser(accessToken, userId).then((res) => {
