@@ -29,6 +29,19 @@ export const getSingleData = async (name) => {
   );
 };
 
+export const addFile = async (token, form) => {
+  return await axios.post(
+    `${import.meta.env.VITE_APP_API_URL}/add-file`,
+    form,
+    {
+      headers: {
+        "content-type": "application/json",
+        accessToken: token,
+      },
+    }
+  );
+};
+
 export const postDownCount = async (form) => {
   return await axios.post(
     `${import.meta.env.VITE_APP_API_URL}/down-count`,

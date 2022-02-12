@@ -6,6 +6,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import User from "./pages/User";
 import AdsDynamic from "./pages/AdsDynamic";
 import { GoogleApiProvider } from "react-gapi";
+import Policy from "./pages/policy";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/admin/*" element={<DashboardLayout />} />
           <Route path="/user" element={<User />} />
           <Route path="/file/:name" exact element={<AdsDynamic />} />
+          <Route path="/policy" exact element={<Policy />} />
         </Routes>
       </BrowserRouter>
     </GoogleApiProvider>

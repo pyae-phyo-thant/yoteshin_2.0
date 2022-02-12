@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import playStore from "../images/playstore.png";
 
 const Footer = () => {
@@ -22,13 +23,11 @@ const Footer = () => {
             </p>
           </div>
         </div>
-        {/* <div>
-          <h6 className="text-white text-2xl font-bold">Application</h6>
-          <p>Get our mobile application</p>
-          <div className="w-[11%]">
-            <img src={playStore} />
-          </div>
-        </div> */}
+        <div className="text-right">
+          <span className="text-white text-sm">
+            <Link to="/policy"> Privacy Policy</Link>
+          </span>
+        </div>
       </div>
     </div>
   );

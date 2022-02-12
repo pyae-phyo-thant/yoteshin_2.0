@@ -9,13 +9,14 @@ import { useGoogleApi } from "react-gapi";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { formatBytes } from "../function/formatBytes";
-import { getUser } from "../function/api";
+import { addFile, getUser } from "../function/api";
 
 const GGenerator = () => {
   const [multi, setMulti] = useState(false);
   const [save, setSave] = useState(false);
   const [ids, setIds] = useState([]);
   const [datas, setDatas] = useState([]);
+  const [files, setFiles] = useState([]);
   const [multiText, setMultiText] = useState("");
   const history = useNavigate();
   const singleRef = useRef();
@@ -74,30 +75,23 @@ const GGenerator = () => {
     ],
   });
 
-  const sendSingleData = async () => {
-    await axios
-      .get(
-        `https://www.googleapis.com/drive/v3/files/${singleRef?.current?.value}?fields=name%2Csize%2Cid%2CthumbnailLink%2CmimeType&key=${gApiKey}`,
-        {},
-        {
-          headers: {
-            Authorization: "Bearer" + gAccessToken,
-            Accept: "application/json",
-          },
-        }
-      )
+  const sendSingleData = () => {
+    gapiDrive?.client?.drive.files
+      .get({
+        fileId: singleRef?.current?.value,
+        fields: "id,name,thumbnailLink,mimeType,size",
+      })
       .then((res) => {
-        console.log("drive data from id", res);
         //Format to Byte to MB ,GB
-        const fileSize = formatBytes(res.data.size);
+        const fileSize = formatBytes(res.result.size);
 
         const form = new FormData();
 
         form.append("user_id", userId);
-        form.append("file_id", res.data.id);
-        form.append("name", res.data.name);
-        form.append("thumb", res.data.thumbnailLink);
-        form.append("mime_type", res.data.mimeType);
+        form.append("file_id", res.result.id);
+        form.append("name", res.result.name);
+        form.append("thumb", res.result.thumbnailLink);
+        form.append("mime_type", res.result.mimeType);
         form.append("file_size", fileSize);
 
         axios
@@ -120,60 +114,55 @@ const GGenerator = () => {
       .catch((err) => console.log("fail to get data from drive id", err));
   };
 
-  const sendMultiData = () => {
-    console.log(ids, "array of id");
-    let dataArray = [];
+  // useEffect(() => {
+  //   let driveId = "";
 
-    ids.forEach(async (id) => {
-      await axios
-        .get(
-          `https://www.googleapis.com/drive/v3/files/${id}?fields=name%2Csize%2Cid%2CthumbnailLink%2CmimeType&key=${gApiKey}`,
-          {},
-          {
-            headers: {
-              Authorization: "Bearer" + gAccessToken,
-              Accept: "application/json",
-            },
-          }
-        )
+  //   if (multi) {
+  //     gapiDrive?.client?.drive.files
+  //       .get({
+  //         fileId: driveId,
+  //         fields: "*",
+  //       })
+  //       .then((res) => {
+  //         console.log("drive data from id", res);
+  //         setFiles(res.result.files);
+  //       })
+  //       .catch((err) => console.log("fail to get data from drive id", err));
+  //   }
+  // }, [multi]);
+
+  const sendMultiData = async () => {
+    ids.forEach((id) => {
+      gapiDrive?.client?.drive.files
+        .get({
+          fileId: id,
+          fields: "id,name,thumbnailLink,mimeType,size",
+        })
         .then((res) => {
-          dataArray.push(...dataArray, res);
           console.log("drive data from id", res);
+          //Format to Byte to MB ,GB
+          const fileSize = formatBytes(res.result.size);
+
+          const form = new FormData();
+
+          form.append("user_id", userId);
+          form.append("file_id", res.result.id);
+          form.append("name", res.result.name);
+          form.append("thumb", res.result.thumbnailLink);
+          form.append("mime_type", res.result.mimeType);
+          form.append("file_size", fileSize);
+
+          addFile(accessToken, form)
+            .then((res) => {
+              console.log("send success", res);
+            })
+            .catch((err) => {
+              toast.error("add fail!");
+              console.log("send file fail", err);
+            });
         })
         .catch((err) => console.log("fail to get data from drive id", err));
     });
-    setDatas(dataArray);
-    console.log("dataArray", dataArray);
-    console.log("datas", datas);
-    // console.log("Datas array", dataArray);
-    //Format to Byte to MB ,GB
-    // const fileSize = formatBytes(res.data.size);
-
-    // const form = new FormData();
-
-    // form.append("user_id", userId);
-    // form.append("file_id", res.data.id);
-    // form.append("name", res.data.name);
-    // form.append("thumb", res.data.thumbnailLink);
-    // form.append("mime_type", res.data.mimeType);
-    // form.append("file_size", fileSize);
-
-    // axios
-    //   .post(`${import.meta.env.VITE_APP_API_URL}/add-file`, form, {
-    //     headers: {
-    //       "content-type": "application/json",
-    //       this_is_token: accessToken,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     toast.success("Successfully Added!");
-    //     singleRef.current.value = "";
-    //     console.log("send success", res);
-    //   })
-    //   .catch((err) => {
-    //     toast.error("add fail!");
-    //     console.log("send file fail", err);
-    //   });
   };
 
   return (

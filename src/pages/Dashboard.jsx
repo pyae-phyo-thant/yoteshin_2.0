@@ -11,7 +11,7 @@ import { BiCopy } from "react-icons/bi";
 import loadingButton from "../images/loading_red.gif";
 
 import { formatBytes } from "../function/formatBytes";
-import { getData, getUser } from "../function/api";
+import { addFile, getData, getUser } from "../function/api";
 
 import {
   Chart as ChartJS,
@@ -34,7 +34,6 @@ const Dashboard = () => {
   const [isCopy, setIsCopy] = useState(false);
   const [id, setId] = useState("");
   const [loading, setLoading] = useState(false);
-  const [click, setClick] = useState(false);
   const [linkValid, setLinkValid] = useState(false);
   const [showError, setshowError] = useState(false);
   const [days, setDays] = useState([]);
@@ -98,6 +97,7 @@ const Dashboard = () => {
 
   const onChangeState = (e) => {
     setShare(e.target.value);
+    setId(e.target.value);
   };
 
   const copyToClipboard = () => {
@@ -106,56 +106,48 @@ const Dashboard = () => {
     console.log(ref.current.value);
   };
 
+  const gapiDrive = useGoogleApi({
+    scopes: ["https://www.googleapis.com/auth/drive"],
+  });
+
   const getDatas = async () => {
     if (ref.current?.value.slice(32, 65)) {
-      setLinkValid(true);
       setshowError(false);
     } else {
-      setLinkValid(false);
-      setshowError(true);
-    }
-    if (!linkValid) {
-      return;
+      return setshowError(true);
     }
 
-    setId(ref.current?.value);
     const driveId = id.slice(32, 65);
 
     setLoading(true);
-    await axios
-      .get(
-        `https://www.googleapis.com/drive/v3/files/${driveId}?fields=name%2Csize%2Cid%2CthumbnailLink%2CmimeType&key=${gApiKey}`,
-        {},
-        {
-          headers: {
-            Authorization: "Bearer" + gAccessToken,
-            Accept: "application/json",
-          },
-        }
-      )
+
+    // axios
+    //   .get(
+    //     `https://www.googleapis.com/drive/v3/files/${driveId}?fields=name%2Csize%2Cid%2CthumbnailLink%2CmimeType&key=${gApiKey}`
+    //   )
+    //id,name,thumbnailLink,mimeType,size
+
+    await gapiDrive?.client?.drive.files
+      .get({
+        fileId: driveId,
+        fields: "id,name,thumbnailLink,mimeType,size",
+      })
       .then((res) => {
-        setClick(false);
         setLoading(false);
         console.log("drive data from id", res);
         //Format to Byte to MB ,GB
-        const fileSize = formatBytes(res.data.size);
+        const fileSize = formatBytes(res.result.size);
 
         const form = new FormData();
 
         form.append("user_id", userId);
-        form.append("file_id", res.data.id);
-        form.append("name", res.data.name);
-        form.append("thumb", res.data.thumbnailLink);
-        form.append("mime_type", res.data.mimeType);
+        form.append("file_id", res.result.id);
+        form.append("name", res.result.name);
+        form.append("thumb", res.result.thumbnailLink);
+        form.append("mime_type", res.result.mimeType);
         form.append("file_size", fileSize);
 
-        axios
-          .post(`${import.meta.env.VITE_APP_API_URL}/add-file`, form, {
-            headers: {
-              "content-type": "application/json",
-              accessToken: accessToken,
-            },
-          })
+        addFile(accessToken, form)
           .then((res) => {
             setShowCopy(true);
             setCopyLink(`${baseURL}/file/${res.data.data.slug}`);
@@ -166,10 +158,10 @@ const Dashboard = () => {
       })
       .catch((err) => {
         setLoading(false);
-        setClick(true);
         console.log("fail to get data from drive id", err);
       });
   };
+
   useEffect(() => {
     getData(accessToken, userId).then((res) => {
       console.log(res);
@@ -186,54 +178,55 @@ const Dashboard = () => {
   }, []);
 
   // Creating Chart
-  ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend
-  );
+  // ChartJS.register(
+  //   CategoryScale,
+  //   LinearScale,
+  //   PointElement,
+  //   LineElement,
+  //   Title,
+  //   Tooltip,
+  //   Legend
+  // );
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: "Chart.js Line Chart",
-      },
-    },
-  };
+  // const options = {
+  //   responsive: true,
+  //   plugins: {
+  //     legend: {
+  //       position: "top",
+  //     },
+  //     title: {
+  //       display: true,
+  //       text: "Chart.js Line Chart",
+  //     },
+  //   },
+  // };
 
-  var dt = new Date();
-  var month = dt.getMonth();
-  var year = dt.getFullYear();
-  const daysInMonth = new Date(year, month, 0).getDate();
+  // var dt = new Date();
+  // var month = dt.getMonth();
+  // var year = dt.getFullYear();
+  // const daysInMonth = new Date(year, month, 0).getDate();
 
-  useEffect(() => {
-    let array = [];
-    for (let index = 1; index <= daysInMonth; index++) {
-      array.push(index);
-    }
-    // setDays(array);
-  }, []);
-  const labels = days;
+  // useEffect(() => {
+  //   let array = [];
+  //   for (let index = 1; index <= daysInMonth; index++) {
+  //     array.push(index);
+  //   }
+  //   // setDays(array);
+  // }, []);
+  // const labels = days;
 
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: "Downloads",
-        data: ["10", "3", "6"],
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-    ],
-  };
+  // const data = {
+  //   labels,
+  //   datasets: [
+  //     {
+  //       label: "Downloads",
+  //       data: ["10", "3", "6"],
+  //       borderColor: "rgb(255, 99, 132)",
+  //       backgroundColor: "rgba(255, 99, 132, 0.5)",
+  //     },
+  //   ],
+  // };
+  //------- End Chart
 
   return (
     <>
@@ -306,7 +299,7 @@ const Dashboard = () => {
               ) : (
                 <FiArrowRightCircle className="mr-1" />
               )}
-              <span>{click ? "Click_again" : "Share"}</span>
+              <span>Share</span>
             </button>
           </div>
           {showError ? (
