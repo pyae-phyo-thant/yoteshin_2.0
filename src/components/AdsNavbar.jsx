@@ -33,7 +33,9 @@ const Navbar = () => {
   }, [auth]);
 
   const onSignoutSuccess = () => {
+    gapi.auth2.getAuthInstance().disconnect();
     gapi.auth2.getAuthInstance().signOut();
+
     localStorage.removeItem("admin_token");
     localStorage.removeItem("admin_avatar");
     localStorage.removeItem("user_avatar");

@@ -84,7 +84,6 @@ const User = () => {
     }
   };
   useEffect(() => {
-    gapi;
     getDriveStorage();
     setName(localStorage.getItem("admin_name"));
     setEmail(localStorage.getItem("admin_email"));

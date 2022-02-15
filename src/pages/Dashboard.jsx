@@ -107,10 +107,13 @@ const Dashboard = () => {
   };
 
   const gapiDrive = useGoogleApi({
+    discoveryDocs: [
+      "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+    ],
     scopes: ["https://www.googleapis.com/auth/drive"],
   });
 
-  const getDatas = async () => {
+  const getDatas =  () => {
     if (ref.current?.value.slice(32, 65)) {
       setshowError(false);
     } else {
@@ -127,7 +130,7 @@ const Dashboard = () => {
     //   )
     //id,name,thumbnailLink,mimeType,size
 
-    await gapiDrive?.client?.drive.files
+     gapiDrive?.client.drive.files
       .get({
         fileId: driveId,
         fields: "id,name,thumbnailLink,mimeType,size",
@@ -230,14 +233,14 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="bg-[rgba(2,132,199)] p-10">
-        <div className="flex items-center text-2xl text-white font-semibold">
+      <div className="bg-glass-dash p-10">
+        <div className="flex items-center text-2xl font-semibold">
           <AiOutlineDashboard className="mr-2 text-red-600" />{" "}
           <h1>Dashboard</h1>
         </div>
 
         <div className="my-10 flex gap-4">
-          <div className="flex flex-col rounded-lg p-4  bg-white shadow-lg w-3/6">
+          <div className="flex bg-glass flex-col rounded-lg p-4  bg-white shadow-xl w-3/6">
             <div className="mb-4 pb-3 flex justify-center text-4xl text-[#6c757d]">
               <CgDatabase className="text-blue-600" />
             </div>
@@ -248,7 +251,7 @@ const Dashboard = () => {
               {totalLinks}
             </h5>
           </div>
-          <div className="flex flex-col rounded-lg p-4  bg-white shadow-lg w-3/6">
+          <div className="flex bg-glass flex-col rounded-lg p-4  bg-white shadow-lg w-3/6">
             <div className="mb-4 pb-3 flex justify-center text-4xl text-[#6c757d]">
               <Link to="/admin/files">
                 <AiOutlineCloudDownload className="text-green-600" />
@@ -269,7 +272,7 @@ const Dashboard = () => {
       </div>
 
       <div className="px-10 mt-20">
-        <div className="rounded-lg p-4 shadow-md w-full bg-white">
+        <div className="rounded-lg bg-glass p-4 shadow-md w-full bg-white">
           <div className="flex items-center text-2xl font-medium mb-4">
             <FiShare2 className="mr-2 text-blue-500" />
             Quick Share

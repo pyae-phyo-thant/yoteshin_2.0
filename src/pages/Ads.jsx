@@ -195,7 +195,7 @@ const Ads = () => {
       ) : (
         <div className="bg-white rounded-md px-4 py-4 mt-16">
           <h6 className="text-xl font-semibold">Leftside Ad</h6>
-          <div className="grid grid-cols-4 gap-4 my-4">
+          <div className="grid grid-cols-4 gap-4 my-4 glass-ads py-2">
             <div className="w-[30%] m-auto">
               {allAds && allAds.bsize1_image ? (
                 <img src={allAds.bsize1_image} />
@@ -222,7 +222,7 @@ const Ads = () => {
           </div>
           {/* ---------- Right */}
           <h6 className="text-xl font-semibold">Rightside Ad</h6>
-          <div className="grid grid-cols-4 gap-4 my-4">
+          <div className="grid grid-cols-4 gap-4 my-4 glass-ads py-2">
             <div className="w-[30%] m-auto">
               {allAds && allAds.bsize2_image ? (
                 <img src={allAds.bsize2_image} />
@@ -249,7 +249,7 @@ const Ads = () => {
           </div>
           {/* ---------- Bottom */}
           <h6 className="text-xl font-semibold">Bottom Ad</h6>
-          <div className="grid grid-cols-4 gap-4 my-4">
+          <div className="grid grid-cols-4 gap-4 my-4 glass-ads py-2">
             <div className="m-auto">
               {allAds && allAds.banner_image ? (
                 <img src={allAds.banner_image} />

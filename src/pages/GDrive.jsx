@@ -122,7 +122,7 @@ const GDrive = () => {
             <h1>Google Drive</h1>
           </div>
 
-          <div className="bg-white rounded-md my-10">
+          <div className="bg-glass rounded-md my-10">
             <Table
               tableHeader={tableHeader}
               tableData={tableData}

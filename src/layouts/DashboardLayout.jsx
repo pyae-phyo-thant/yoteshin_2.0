@@ -45,7 +45,7 @@ const DashboardLayout = () => {
   return (
     <Layout>
       <ToggleSidebarContext.Provider value={toggleSidebar}>
-        <div className="md:flex bg-gray-50">
+        <div className="md:flex bg-glass">
           <Sidebar
             sidebarState={sidebarState}
             toggleSidebar={toggleSidebar}

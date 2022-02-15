@@ -19,7 +19,7 @@ const UserAuth = ({
             onFailure={onLoginFailure}
             cookiePolicy={"single_host_origin"}
             isSignedIn={true}
-            scope="profile email https://www.googleapis.com/auth/drive"
+            scope="profile https://www.googleapis.com/auth/drive"
             className="font-bold"
           />
         </div>

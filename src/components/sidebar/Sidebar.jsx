@@ -14,7 +14,7 @@ const style = {
 const Sidebar = ({ sidebarState, toggleSidebar, menuItems }) => {
   return (
     <div
-      className={`transition-all duration-75 flex-none relative ${
+      className={`transition-all bg-glass duration-75 flex-none relative ${
         sidebarState ? "md:w-64 w-40" : "md:w-16 w-8"
       }`}
     >

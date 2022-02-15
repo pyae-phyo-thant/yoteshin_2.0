@@ -21,7 +21,7 @@ const Layout = ({ children }) => {
     <>
       <Navbar />
       <ToastContainer />
-      <div className="min-h-screen relative w-full h-full bg-gray-100">
+      <div className="min-h-screen relative w-full h-full bg-glass">
         {children}
       </div>
       <Footer />
