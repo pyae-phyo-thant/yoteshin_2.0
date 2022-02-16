@@ -14,7 +14,10 @@ const Login = () => {
   const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
 
   const gapi = useGoogleApi({
-    scopes: ["profile"],
+    discoveryDocs: [
+      "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+    ],
+    scopes: ["https://www.googleapis.com/auth/drive"],
   });
 
   const auth = gapi?.auth2.getAuthInstance();

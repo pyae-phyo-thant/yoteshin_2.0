@@ -5,6 +5,7 @@ import { GoogleLogout } from "react-google-login";
 import { Link, useNavigate } from "react-router-dom";
 import { useGoogleApi } from "react-gapi";
 import { getUser } from "../function/api";
+import axios from "axios";
 
 const NarbarItem = ({ title, classProps, url }) => {
   return (
@@ -18,6 +19,7 @@ const clientId = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
 
 const Navbar = () => {
   const [authenticate, setAuthenticate] = useState(false);
+  const admin_Gtoken = localStorage.getItem("admin_Gtoken");
   const gapi = useGoogleApi({
     scopes: ["profile"],
   });
@@ -34,7 +36,18 @@ const Navbar = () => {
 
   const onSignoutSuccess = () => {
     gapi.auth2.getAuthInstance().disconnect();
+
     gapi.auth2.getAuthInstance().signOut();
+
+    axios.post(
+      `https://oauth2.googleapis.com/revoke?token=${admin_Gtoken}`,
+      {},
+      {
+        headers: {
+          "Content-type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
 
     localStorage.removeItem("admin_token");
     localStorage.removeItem("admin_avatar");

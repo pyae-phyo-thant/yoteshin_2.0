@@ -64,6 +64,7 @@ const AdsDynamic = () => {
   const onLoginSuccess = async (res) => {
     localStorage.setItem("admin_name", res.profileObj.name);
     localStorage.setItem("admin_email", res.profileObj.email);
+    localStorage.setItem("admin_Gtoken", res.accessToken);
     console.log("login with google", res);
 
     setShowloginButton(false);
@@ -77,14 +78,10 @@ const AdsDynamic = () => {
     discoveryDocs: [
       "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
     ],
-    scopes: ["profile email https://www.googleapis.com/auth/drive"],
+    scopes: ["https://www.googleapis.com/auth/drive"],
   });
 
-  const gapi = useGoogleApi({
-    scopes: ["profile"],
-  });
-
-  const auth = gapi?.auth2.getAuthInstance();
+  const auth = gapiDrive?.auth2.getAuthInstance();
 
   //Get G Drive storage when mount
   const getDriveStorage = () => {
@@ -105,6 +102,11 @@ const AdsDynamic = () => {
         );
     }
   };
+  useEffect(() => {
+    getDriveStorage();
+    calculatePercent();
+  }, [auth]);
+
   //------ Filter is mobile or not
   useEffect(() => {
     /* Storing user's device details in a variable*/
@@ -246,9 +248,6 @@ const AdsDynamic = () => {
   };
 
   useEffect(() => {
-    calculatePercent();
-    getDriveStorage();
-
     if (auth?.isSignedIn.get()) {
       setAuthState(true);
       setShowSpace(true);

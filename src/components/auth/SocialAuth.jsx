@@ -40,8 +40,8 @@ const SocialAuth = ({
                       onFailure={onLoginFailure}
                       cookiePolicy={"single_host_origin"}
                       isSignedIn={true}
-                      scope="profile email https://www.googleapis.com/auth/drive"
                       className="font-bold"
+                      scope="profile https://www.googleapis.com/auth/drive"
                     />
                   </>
                 ) : null}

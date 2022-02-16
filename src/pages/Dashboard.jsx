@@ -13,19 +13,64 @@ import loadingButton from "../images/loading_red.gif";
 import { formatBytes } from "../function/formatBytes";
 import { addFile, getData, getUser } from "../function/api";
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
+import Chart from "../components/chart/Chart";
+
+const DummyData = [
+  {
+    name: "Jan",
+    Downloads: 4000,
+  },
+  {
+    name: "Feb",
+    Downloads: 3000,
+  },
+  {
+    name: "Mar",
+    Downloads: 5000,
+  },
+  {
+    name: "Apr",
+    Downloads: 4000,
+  },
+  {
+    name: "May",
+    Downloads: 3000,
+  },
+  {
+    name: "June",
+    Downloads: 2000,
+  },
+  {
+    name: "July",
+    Downloads: 4000,
+  },
+  {
+    name: "Aug",
+    Downloads: 3000,
+  },
+  {
+    name: "Sept",
+    Downloads: 4000,
+  },
+  {
+    name: "Oct",
+    Downloads: 1000,
+  },
+  {
+    name: "Nov",
+    Downloads: 4000,
+  },
+  {
+    name: "Dec",
+    Downloads: 3000,
+  },
+];
 
 const Dashboard = () => {
+  var dt = new Date();
+  var month = dt.getMonth();
+  console.log(month, "w");
+
   const [share, setShare] = useState("");
   const [totalLinks, setTotalLinks] = useState(0);
   const [totalDownCount, setTotalDownCount] = useState(0);
@@ -68,7 +113,6 @@ const Dashboard = () => {
       if (res.data.data && res.data.data.is_admin !== true) {
         history("/");
       }
-      console.log(res);
     });
   }, []);
 
@@ -103,7 +147,6 @@ const Dashboard = () => {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(copyRef.current.value);
     setIsCopy(true);
-    console.log(ref.current.value);
   };
 
   const gapiDrive = useGoogleApi({
@@ -113,7 +156,7 @@ const Dashboard = () => {
     scopes: ["https://www.googleapis.com/auth/drive"],
   });
 
-  const getDatas =  () => {
+  const getDatas = () => {
     if (ref.current?.value.slice(32, 65)) {
       setshowError(false);
     } else {
@@ -130,14 +173,14 @@ const Dashboard = () => {
     //   )
     //id,name,thumbnailLink,mimeType,size
 
-     gapiDrive?.client.drive.files
+    gapiDrive?.client.drive.files
       .get({
         fileId: driveId,
         fields: "id,name,thumbnailLink,mimeType,size",
       })
       .then((res) => {
         setLoading(false);
-        console.log("drive data from id", res);
+
         //Format to Byte to MB ,GB
         const fileSize = formatBytes(res.result.size);
 
@@ -167,7 +210,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     getData(accessToken, userId).then((res) => {
-      console.log(res);
       if (res.data) {
         setTotalLinks(res.data.length);
 
@@ -179,57 +221,6 @@ const Dashboard = () => {
       }
     });
   }, []);
-
-  // Creating Chart
-  // ChartJS.register(
-  //   CategoryScale,
-  //   LinearScale,
-  //   PointElement,
-  //   LineElement,
-  //   Title,
-  //   Tooltip,
-  //   Legend
-  // );
-
-  // const options = {
-  //   responsive: true,
-  //   plugins: {
-  //     legend: {
-  //       position: "top",
-  //     },
-  //     title: {
-  //       display: true,
-  //       text: "Chart.js Line Chart",
-  //     },
-  //   },
-  // };
-
-  // var dt = new Date();
-  // var month = dt.getMonth();
-  // var year = dt.getFullYear();
-  // const daysInMonth = new Date(year, month, 0).getDate();
-
-  // useEffect(() => {
-  //   let array = [];
-  //   for (let index = 1; index <= daysInMonth; index++) {
-  //     array.push(index);
-  //   }
-  //   // setDays(array);
-  // }, []);
-  // const labels = days;
-
-  // const data = {
-  //   labels,
-  //   datasets: [
-  //     {
-  //       label: "Downloads",
-  //       data: ["10", "3", "6"],
-  //       borderColor: "rgb(255, 99, 132)",
-  //       backgroundColor: "rgba(255, 99, 132, 0.5)",
-  //     },
-  //   ],
-  // };
-  //------- End Chart
 
   return (
     <>
@@ -267,11 +258,16 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="rounded-lg mx-10 mt-10 shadow-lg w-full bg-white">
-        {/* <Line options={options} data={data} /> */}
+      <div className="rounded-lg mx-10 mt-5 md:w-[94%] shadow-lg w-full bg-white">
+        <Chart
+          data={DummyData}
+          title="Downloads Analytics"
+          grid
+          dataKey="Downloads"
+        />
       </div>
 
-      <div className="px-10 mt-20">
+      <div className="px-10 mt-20 mb-10">
         <div className="rounded-lg bg-glass p-4 shadow-md w-full bg-white">
           <div className="flex items-center text-2xl font-medium mb-4">
             <FiShare2 className="mr-2 text-blue-500" />

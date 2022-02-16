@@ -72,7 +72,6 @@ const User = () => {
           (response) => {
             setLoading(false);
             // Handle the results here (response.result has the parsed body).
-            console.log("Response", response);
             setLimit(response.result.storageQuota.limit);
             setUsage(response.result.storageQuota.usage);
           },
@@ -83,11 +82,12 @@ const User = () => {
         );
     }
   };
+
   useEffect(() => {
     getDriveStorage();
     setName(localStorage.getItem("admin_name"));
     setEmail(localStorage.getItem("admin_email"));
-  }, []);
+  }, [auth]);
 
   return (
     <>
