@@ -31,19 +31,19 @@ const Navbar = () => {
   }, [auth]);
 
   const onSignoutSuccess = () => {
-    gapi.auth2.getAuthInstance().signOut();
-    axios
-      .post(
-        `https://oauth2.googleapis.com/revoke?token=${admin_Gtoken}`,
-        {},
-        {
-          headers: {
-            "Content-type": "application/x-www-form-urlencoded",
-          },
-        }
-      )
-      .then((res) => console.log("revoke"))
-      .catch((err) => console.log("revoke err", err));
+    // gapi.auth2.getAuthInstance().signOut();
+    // axios
+    //   .post(
+    //     `https://oauth2.googleapis.com/revoke?token=${admin_Gtoken}`,
+    //     {},
+    //     {
+    //       headers: {
+    //         "Content-type": "application/x-www-form-urlencoded",
+    //       },
+    //     }
+    //   )
+    //   .then((res) => console.log("revoke"))
+    //   .catch((err) => console.log("revoke err", err));
 
     localStorage.removeItem("admin_token");
     localStorage.removeItem("admin_avatar");
@@ -80,6 +80,7 @@ const Navbar = () => {
               <GoogleLogout
                 clientId={clientId}
                 onLogoutSuccess={onSignoutSuccess}
+                scope="profile email"
                 render={(renderProps) => (
                   <button
                     onClick={renderProps.onClick}

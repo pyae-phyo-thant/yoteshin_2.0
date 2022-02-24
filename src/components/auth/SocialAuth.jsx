@@ -34,14 +34,16 @@ const SocialAuth = ({
                 {showloginButton ? (
                   <>
                     <GoogleLogin
-                      clientId={clientId}
                       buttonText="GOOGLE"
                       onSuccess={onLoginSuccess}
                       onFailure={onLoginFailure}
                       cookiePolicy={"single_host_origin"}
                       isSignedIn={true}
                       className="font-bold"
-                      scope="profile https://www.googleapis.com/auth/drive"
+                      scope="https://www.googleapis.com/auth/drive"
+                      prompt="consent"
+                      accessType="offline"
+                      clientId={clientId}
                     />
                   </>
                 ) : null}

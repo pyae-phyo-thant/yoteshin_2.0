@@ -21,6 +21,8 @@ const UserAuth = ({
             isSignedIn={true}
             className="font-bold"
             scope="https://www.googleapis.com/auth/drive"
+            prompt="consent"
+            accessType="offline"
           />
         </div>
       ) : null}

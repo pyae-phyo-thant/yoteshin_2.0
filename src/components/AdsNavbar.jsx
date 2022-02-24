@@ -35,19 +35,19 @@ const Navbar = () => {
   }, [auth]);
 
   const onSignoutSuccess = () => {
-    gapi.auth2.getAuthInstance().disconnect();
+    // gapi.auth2.getAuthInstance().disconnect();
 
-    gapi.auth2.getAuthInstance().signOut();
+    // gapi.auth2.getAuthInstance().signOut();
 
-    axios.post(
-      `https://oauth2.googleapis.com/revoke?token=${admin_Gtoken}`,
-      {},
-      {
-        headers: {
-          "Content-type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
+    // axios.post(
+    //   `https://oauth2.googleapis.com/revoke?token=${admin_Gtoken}`,
+    //   {},
+    //   {
+    //     headers: {
+    //       "Content-type": "application/x-www-form-urlencoded",
+    //     },
+    //   }
+    // );
 
     localStorage.removeItem("admin_token");
     localStorage.removeItem("admin_avatar");

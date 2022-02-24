@@ -7,6 +7,7 @@ import User from "./pages/User";
 import AdsDynamic from "./pages/AdsDynamic";
 import { GoogleApiProvider } from "react-gapi";
 import Policy from "./pages/policy";
+import Terms from "./pages/terms";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/user" element={<User />} />
           <Route path="/file/:name" exact element={<AdsDynamic />} />
           <Route path="/policy" exact element={<Policy />} />
+          <Route path="/terms" exact element={<Terms />} />
         </Routes>
       </BrowserRouter>
     </GoogleApiProvider>

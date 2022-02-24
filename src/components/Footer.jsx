@@ -28,6 +28,11 @@ const Footer = () => {
             <Link to="/policy"> Privacy Policy</Link>
           </span>
         </div>
+        <div className="text-right">
+          <span className="text-white text-sm">
+            <Link to="/terms"> Term & Conditions</Link>
+          </span>
+        </div>
       </div>
     </div>
   );

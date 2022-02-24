@@ -102,13 +102,13 @@ const Dashboard = () => {
     if (!auth?.isSignedIn.get()) {
       history("/login");
     }
+  }, [auth]);
+
+  useEffect(() => {
     if (!accessToken) {
       alert("Your don't have accessToken please Login Again!");
       history("/login");
     }
-  }, [auth]);
-
-  useEffect(() => {
     getUser(accessToken, userId).then((res) => {
       if (res.data.data && res.data.data.is_admin !== true) {
         history("/");
