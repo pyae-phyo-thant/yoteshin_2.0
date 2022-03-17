@@ -15,18 +15,13 @@ const GGenerator = () => {
   const [multi, setMulti] = useState(false);
   const [save, setSave] = useState(false);
   const [ids, setIds] = useState([]);
-  const [datas, setDatas] = useState([]);
-  const [files, setFiles] = useState([]);
   const [multiText, setMultiText] = useState("");
   const history = useNavigate();
   const singleRef = useRef();
   const multiRef = useRef();
   const accessToken = localStorage.getItem("admin_token");
-  const gAccessToken = localStorage.getItem("admin_Gtoken");
   const userId = localStorage.getItem("admin_userId");
 
-  const baseURL = import.meta.env.VITE_APP_BASE_URL;
-  const gApiKey = import.meta.env.VITE_APP_GOOGLE_API_KEY;
   const gapi = useGoogleApi({
     scopes: ["profile"],
   });

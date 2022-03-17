@@ -17,7 +17,6 @@ const Ads = () => {
   const [bSizeUrl2, setBsizeUrl2] = useState("");
   const [bannerImg, setBannerImg] = useState("");
   const [bannerUrl, setBannerUrl] = useState("");
-  const [sizeError, setSizeError] = useState(false);
   const [check1, setCheck1] = useState(false);
   const [check2, setCheck2] = useState(false);
   const [check3, setCheck3] = useState(false);
@@ -283,7 +282,6 @@ const Ads = () => {
             handleClickOpen={handleClickOpen}
             handleClose={handleClose}
             open={showModel}
-            sizeError={sizeError}
             bSizeImg1={bSizeImg1}
             setBsizeImg1={setBsizeImg1}
             bSizeUrl1={bSizeUrl1}
@@ -309,7 +307,6 @@ const Ads = () => {
             handleClickOpen={handleClickOpen}
             handleClose={handleClose}
             open={showModel}
-            sizeError={sizeError}
             bSizeImg1={bSizeImg1}
             setBsizeImg1={setBsizeImg1}
             bSizeUrl1={bSizeUrl1}

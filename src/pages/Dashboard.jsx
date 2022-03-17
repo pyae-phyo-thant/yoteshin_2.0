@@ -79,18 +79,14 @@ const Dashboard = () => {
   const [isCopy, setIsCopy] = useState(false);
   const [id, setId] = useState("");
   const [loading, setLoading] = useState(false);
-  const [linkValid, setLinkValid] = useState(false);
   const [showError, setshowError] = useState(false);
-  const [days, setDays] = useState([]);
   const ref = useRef();
   const copyRef = useRef();
   const history = useNavigate();
   const accessToken = localStorage.getItem("admin_token");
-  const gAccessToken = localStorage.getItem("admin_Gtoken");
   const userId = localStorage.getItem("admin_userId");
 
   const baseURL = import.meta.env.VITE_APP_BASE_URL;
-  const gApiKey = import.meta.env.VITE_APP_GOOGLE_API_KEY;
 
   const gapi = useGoogleApi({
     scopes: ["profile"],

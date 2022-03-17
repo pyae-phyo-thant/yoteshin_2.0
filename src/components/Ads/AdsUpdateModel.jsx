@@ -45,7 +45,6 @@ const BootstrapDialogTitle = (props) => {
 const AdsUpdateModel = ({
   open,
   handleClose,
-  sizeError,
   bSizeImg1,
   setBsizeImg1,
   bSizeUrl1,

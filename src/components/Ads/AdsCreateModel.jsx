@@ -45,7 +45,6 @@ const BootstrapDialogTitle = (props) => {
 const AdsCreateModel = ({
   open,
   handleClose,
-  sizeError,
   bSizeImg1,
   setBsizeImg1,
   bSizeUrl1,
@@ -163,9 +162,6 @@ const AdsCreateModel = ({
           value={bannerUrl}
           onChange={(e) => setBannerUrl(e.target.value)}
         />
-        {sizeError && (
-          <p className="text-sm text-red-600">Please Check your image size.</p>
-        )}
         <br />
         {/* <input type="text" placeholder="Your Ads Owner Url" value={bSize1} onChange={(e) => setBsize1(e.target.value)} /> */}
         <DialogActions>
