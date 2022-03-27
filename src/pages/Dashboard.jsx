@@ -105,11 +105,11 @@ const Dashboard = () => {
       alert("Your don't have accessToken please Login Again!");
       history("/login");
     }
-    getUser(accessToken, userId).then((res) => {
-      if (res.data.data && res.data.data.is_admin !== true) {
-        history("/");
-      }
-    });
+    // getUser(accessToken, userId).then((res) => {
+    //   if (res.data && res.data.is_admin !== true) {
+    //     history("/");
+    //   }
+    // });
   }, []);
 
   //------ Filter is mobile or not
@@ -192,7 +192,7 @@ const Dashboard = () => {
         addFile(accessToken, form)
           .then((res) => {
             setShowCopy(true);
-            setCopyLink(`${baseURL}/file/${res.data.data.slug}`);
+            setCopyLink(`${baseURL}/file/${res.data.slug}`);
           })
           .catch((err) => {
             console.log("send file fail", err);
@@ -206,10 +206,11 @@ const Dashboard = () => {
 
   useEffect(() => {
     getData(accessToken, userId).then((res) => {
-      if (res.data) {
-        setTotalLinks(res.data.length);
+      console.log(res);
+      if (res.data.data) {
+        setTotalLinks(res.data.data.length);
 
-        const total = res?.data.reduce(
+        const total = res?.data.data.reduce(
           (n, { down_count }) => n + parseInt(down_count),
           0
         );

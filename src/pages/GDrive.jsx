@@ -57,7 +57,7 @@ const GDrive = () => {
   useEffect(() => {
     getData(token, userId)
       .then((res) => {
-        setTableData(res.data);
+        setTableData(res.data.data);
         setLoading(false);
         console.log(res, "data from api");
       })

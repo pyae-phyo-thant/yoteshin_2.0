@@ -1,18 +1,18 @@
 import axios from "axios";
 
 export const getData = async (token, userId) => {
-  return await axios.get(`${import.meta.env.VITE_APP_API_URL}/data`, {
+  return await axios.get(`${import.meta.env.VITE_APP_API_URL}/drives`, {
     headers: {
-      accessToken: token,
+      Authorization: `Bearer ${token}`,
       id: userId,
     },
   });
 };
 
 export const getUser = async (token, userId) => {
-  return await axios.get(`${import.meta.env.VITE_APP_API_URL}/get-user`, {
+  return await axios.get(`${import.meta.env.VITE_APP_API_URL}/current-user`, {
     headers: {
-      accessToken: token,
+      Authorization: `Bearer ${token}`,
       id: userId,
     },
   });
@@ -20,7 +20,7 @@ export const getUser = async (token, userId) => {
 
 export const getSingleData = async (name) => {
   return await axios.get(
-    `${import.meta.env.VITE_APP_API_URL}/drive?slug=${name}`,
+    `${import.meta.env.VITE_APP_API_URL}/drives/slug/${name}`,
     {
       headers: {
         "content-type": "application/json",
@@ -30,53 +30,50 @@ export const getSingleData = async (name) => {
 };
 
 export const addFile = async (token, form) => {
+  return await axios.post(`${import.meta.env.VITE_APP_API_URL}/drives`, form, {
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const postDownCount = async (form, id) => {
   return await axios.post(
-    `${import.meta.env.VITE_APP_API_URL}/add-file`,
+    `${import.meta.env.VITE_APP_API_URL}/add-down-count/${id}`,
     form,
     {
       headers: {
         "content-type": "application/json",
-        accessToken: token,
       },
     }
   );
 };
 
-export const postDownCount = async (form) => {
-  return await axios.post(
-    `${import.meta.env.VITE_APP_API_URL}/down-count`,
-    form,
-    {
-      headers: {
-        "content-type": "application/json",
-      },
-    }
-  );
-};
-
-export const postAds = async (token, userId, form) => {
+export const postAds = async (token, form) => {
   return await axios.post(`${import.meta.env.VITE_APP_API_URL}/ads`, form, {
     headers: {
-      accessToken: token,
-      id: userId,
+      Authorization: `Bearer ${token}`,
     },
   });
 };
 
-export const getAds = async (userId) => {
+export const getAds = async (token) => {
   return await axios.get(`${import.meta.env.VITE_APP_API_URL}/ads`, {
     headers: {
-      id: userId,
+      Authorization: `Bearer ${token}`,
     },
   });
 };
 
-export const updateAds = async (token, userId, form) => {
-  return await axios.put(`${import.meta.env.VITE_APP_API_URL}/ads`, form, {
-    headers: {
-      "content-type": "application/x-www-form-urlencoded",
-      accessToken: token,
-      id: userId,
-    },
-  });
+export const updateAds = async (token, adsId, form) => {
+  return await axios.put(
+    `${import.meta.env.VITE_APP_API_URL}/ads/${adsId}`,
+    form,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };

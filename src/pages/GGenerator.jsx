@@ -54,9 +54,9 @@ const GGenerator = () => {
 
   useEffect(() => {
     getUser(accessToken, userId).then((res) => {
-      if (res.data.data && res.data.data.is_admin !== true) {
-        history("/");
-      }
+      // if (res.data && res.data.is_admin !== true) {
+      //   history("/");
+      // }
     });
   });
 
@@ -86,13 +86,7 @@ const GGenerator = () => {
         form.append("mime_type", res.result.mimeType);
         form.append("file_size", fileSize);
 
-        axios
-          .post(`${import.meta.env.VITE_APP_API_URL}/add-file`, form, {
-            headers: {
-              "content-type": "application/json",
-              accessToken: accessToken,
-            },
-          })
+        addFile(accessToken, form)
           .then((res) => {
             toast.success("Successfully Added!");
             singleRef.current.value = "";

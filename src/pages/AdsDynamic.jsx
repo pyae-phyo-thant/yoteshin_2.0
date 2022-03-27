@@ -5,7 +5,7 @@ import { ImGoogleDrive } from "react-icons/im";
 import { useGoogleApi } from "react-gapi";
 
 import { formatBytes } from "../function/formatBytes";
-import { getAds, getSingleData, postDownCount } from "../function/api";
+import { getSingleData, postDownCount } from "../function/api";
 import UserAuth from "../components/auth/UserAuth";
 import Loading from "../components/Loading";
 import AdsLayout from "../components/AdsLayout";
@@ -44,7 +44,8 @@ const AdsDynamic = () => {
   const getDataFromSlug = async () => {
     await getSingleData(params.name)
       .then((res) => {
-        setData(res.data.data);
+        setData(res.data.drive);
+        setAllAds(res.data.ads);
         setInterval(() => {
           setPageLoading(false);
         }, 1000);
@@ -65,10 +66,10 @@ const AdsDynamic = () => {
     localStorage.setItem("admin_name", res.profileObj.name);
     localStorage.setItem("admin_email", res.profileObj.email);
     localStorage.setItem("admin_Gtoken", res.accessToken);
-    console.log("login with google", res);
 
     setShowloginButton(false);
   };
+
   const onLoginFailure = (res) => {
     console.log("Login Failed:", res);
     toast.error("Login failed");
@@ -272,13 +273,11 @@ const AdsDynamic = () => {
 
     const parsedCount = parseInt(data?.down_count);
     const totals = counts + parsedCount;
-
     const form = new FormData();
 
-    form.append("id", data.id);
     form.append("down_count", totals);
 
-    postDownCount(form)
+    postDownCount(form, data.id)
       .then((res) => {
         console.log("success downcount", res);
       })
@@ -298,16 +297,6 @@ const AdsDynamic = () => {
     }
   };
 
-  const getOwnerAds = () => {
-    getAds(data && data.admin_id)
-      .then((res) => {
-        setAllAds(res.data.data);
-      })
-      .catch((err) => console.log("getOwnerAds err", err));
-  };
-  useEffect(() => {
-    getOwnerAds();
-  }, [data]);
   return (
     <AdsLayout>
       <div className="flex justify-between gap-4 min-h-screen md:mt-14  bg-white pt-[30px] md:pt-0 pb-[10px] px-[27px]">
@@ -318,10 +307,10 @@ const AdsDynamic = () => {
         ) : (
           <>
             <div className={`${isMobile ? "hidden" : "block"}`}>
-              <a href={allAds && allAds.bsize1_url}>
+              <a href={allAds && allAds.leftside_redirect_url}>
                 <img
                   className="m-auto w-full"
-                  src={allAds && allAds.bsize1_image}
+                  src={allAds && allAds.leftside_image}
                 />
               </a>
             </div>
@@ -522,15 +511,18 @@ const AdsDynamic = () => {
                   )}
                 </div>
                 <div className="md:mt-10 mt-5 md:w-full">
-                  <a href={allAds && allAds.banner_url}>
+                  <a href={allAds && allAds.banner_redirect_url}>
                     <img src={allAds && allAds.banner_image} />
                   </a>
                 </div>
               </div>
             </div>
             <div className={`${isMobile ? "hidden" : "block"}`}>
-              <a href={allAds && allAds.bsize2_url}>
-                <img className="m-auto" src={allAds && allAds.bsize2_image} />
+              <a href={allAds && allAds.rightside_redirect_url}>
+                <img
+                  className="m-auto"
+                  src={allAds && allAds.rightside_image}
+                />
               </a>
             </div>
           </>

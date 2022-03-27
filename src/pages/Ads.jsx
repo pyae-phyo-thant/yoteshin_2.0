@@ -3,6 +3,7 @@ import { SiGoogleadsense } from "react-icons/si";
 import { useGoogleApi } from "react-gapi";
 import { useNavigate } from "react-router-dom";
 import reactImageSize from "react-image-size";
+import { toast } from "react-toastify";
 
 import { getAds, getUser, postAds, updateAds } from "../function/api";
 import AdsUpdateModel from "../components/Ads/AdsUpdateModel";
@@ -46,20 +47,30 @@ const Ads = () => {
 
   useEffect(() => {
     getUser(accessToken, userId).then((res) => {
-      if (res.data.data && res.data.data.is_admin !== true) {
-        history("/");
-      }
+      // if (res.data && res.data.is_admin !== true) {
+      //   history("/");
+      // }
     });
   });
 
   const handleClickOpen = () => {
     setShowModel(true);
-    setBsizeImg1(allAds && allAds.bsize1_image ? allAds.bsize1_image : "");
-    setBsizeUrl1(allAds && allAds.bsize1_url ? allAds.bsize1_url : "");
-    setBsizeImg2(allAds && allAds.bsize2_image ? allAds.bsize2_image : "");
-    setBsizeUrl2(allAds && allAds.bsize2_url ? allAds.bsize2_url : "");
+    setBsizeImg1(allAds && allAds.leftside_image ? allAds.leftside_image : "");
+    setBsizeUrl1(
+      allAds && allAds.leftside_redirect_url ? allAds.leftside_redirect_url : ""
+    );
+    setBsizeImg2(
+      allAds && allAds.rightside_image ? allAds.rightside_image : ""
+    );
+    setBsizeUrl2(
+      allAds && allAds.rightside_redirect_url
+        ? allAds.rightside_redirect_url
+        : ""
+    );
     setBannerImg(allAds && allAds.banner_image ? allAds.banner_image : "");
-    setBannerUrl(allAds && allAds.banner_url ? allAds.banner_url : "");
+    setBannerUrl(
+      allAds && allAds.banner_redirect_url ? allAds.banner_redirect_url : ""
+    );
   };
   const handleClose = () => {
     setShowModel(false);
@@ -107,23 +118,24 @@ const Ads = () => {
   const handleCreateAds = () => {
     const form = new FormData();
 
-    form.append("admin_id", userId);
-    form.append("bsize1_image", bSizeImg1);
-    form.append("bsize1_url", bSizeUrl1);
-    form.append("bsize2_image", bSizeImg2);
-    form.append("bsize2_url", bSizeUrl2);
+    form.append("leftside_image", bSizeImg1);
+    form.append("leftside_redirect_url", bSizeUrl1);
+    form.append("rightside_image", bSizeImg2);
+    form.append("rightside_redirect_url", bSizeUrl2);
     form.append("banner_image", bannerImg);
-    form.append("banner_url", bannerUrl);
+    form.append("banner_redirect_url", bannerUrl);
 
-    if (check1 === false) {
+    if (check1 === false && !bSizeImg1) {
       alert("Please check Leftside Ad image");
-    } else if (check2 === false) {
+    } else if (check2 === false && bSizeImg2) {
       alert("Please check Rightside Ad image");
-    } else if (check3 === false) {
+    } else if (check3 === false && bannerImg) {
       alert("Please check Bottom Ad image");
     } else {
-      postAds(accessToken, userId, form)
+      postAds(accessToken, form)
         .then((res) => {
+          setShowModel(false);
+          toast.success("Successfully created.");
           console.log(res, "success create ads");
         })
         .catch((err) => {
@@ -135,25 +147,25 @@ const Ads = () => {
     // const form = new FormData();
     const params = new URLSearchParams();
 
-    params.append("id", allAds.id);
-    params.append("bsize1_image", bSizeImg1);
-    params.append("bsize1_url", bSizeUrl1);
-    params.append("bsize2_image", bSizeImg2);
-    params.append("bsize2_url", bSizeUrl2);
+    params.append("leftside_image", bSizeImg1);
+    params.append("leftside_redirect_url", bSizeUrl1);
+    params.append("rightside_image", bSizeImg2);
+    params.append("rightside_redirect_url", bSizeUrl2);
     params.append("banner_image", bannerImg);
-    params.append("banner_url", bannerUrl);
+    params.append("banner_redirect_url", bannerUrl);
 
-    if (check1 === false) {
+    if (check1 === false && !bSizeImg1) {
       alert("Please check Leftside Ad image");
-    } else if (check2 === false) {
+    } else if (check2 === false && !bSizeImg2) {
       alert("Please check Rightside Ad image");
-    } else if (check3 === false) {
+    } else if (check3 === false && bannerImg) {
       alert("Please check Bottom Ad image");
     } else {
-      updateAds(accessToken, userId, params)
+      updateAds(accessToken, allAds.id, params)
         .then((res) => {
+          setShowModel(false);
           console.log(res, "success update ads");
-          setAllAds(res.data.data);
+          getAdsApi();
         })
         .catch((err) => {
           console.log("fail create ads", err);
@@ -163,9 +175,9 @@ const Ads = () => {
 
   const getAdsApi = () => {
     setLoading(true);
-    getAds(userId)
+    getAds(accessToken)
       .then((res) => {
-        setAllAds(res.data.data);
+        setAllAds(res.data);
         setInterval(() => {
           setLoading(false);
         }, 1000);
@@ -196,8 +208,8 @@ const Ads = () => {
           <h6 className="text-xl font-semibold">Leftside Ad</h6>
           <div className="grid grid-cols-4 gap-4 my-4 glass-ads py-2">
             <div className="w-[30%] m-auto">
-              {allAds && allAds.bsize1_image ? (
-                <img src={allAds.bsize1_image} />
+              {allAds && allAds.leftside_image ? (
+                <img src={allAds.leftside_image} />
               ) : (
                 "No Ad Added in this part."
               )}
@@ -205,16 +217,16 @@ const Ads = () => {
             <div className="col-span-2">
               <span>Ads Image Url</span>
               <p className="bg-[#f0ce60] px-3 py-1 mt-1 text-green-500 rounded-md">
-                {allAds && allAds.bsize1_image
-                  ? allAds.bsize1_image
+                {allAds && allAds.leftside_image
+                  ? allAds.leftside_image
                   : "No Ad Added in this part."}
               </p>
             </div>
             <div>
               <span>Redirect Url</span>
               <p className="bg-[#f0ce60] px-3 py-1 mt-1 text-green-500 rounded-md">
-                {allAds && allAds.bsize1_url
-                  ? allAds.bsize1_url
+                {allAds && allAds.leftside_redirect_url
+                  ? allAds.leftside_redirect_url
                   : "No Ad Added in this part."}
               </p>
             </div>
@@ -223,8 +235,8 @@ const Ads = () => {
           <h6 className="text-xl font-semibold">Rightside Ad</h6>
           <div className="grid grid-cols-4 gap-4 my-4 glass-ads py-2">
             <div className="w-[30%] m-auto">
-              {allAds && allAds.bsize2_image ? (
-                <img src={allAds.bsize2_image} />
+              {allAds && allAds.rightside_image ? (
+                <img src={allAds.rightside_image} />
               ) : (
                 "No Ad Added in this part."
               )}
@@ -232,16 +244,16 @@ const Ads = () => {
             <div className="col-span-2">
               <span>Ads Image Url</span>
               <p className="bg-[#f0ce60] px-3 py-1 mt-1 text-green-500 rounded-md">
-                {allAds && allAds.bsize2_image
-                  ? allAds.bsize2_image
+                {allAds && allAds.rightside_image
+                  ? allAds.rightside_image
                   : "No Ad Added in this part."}
               </p>
             </div>
             <div>
               <span>Redirect Url</span>
               <p className="bg-[#f0ce60] px-3 py-1 mt-1 text-green-500 rounded-md">
-                {allAds && allAds.bsize2_url
-                  ? allAds.bsize2_url
+                {allAds && allAds.rightside_redirect_url
+                  ? allAds.rightside_redirect_url
                   : "No Ad Added in this part."}
               </p>
             </div>
@@ -267,8 +279,8 @@ const Ads = () => {
             <div>
               <span>Redirect Url</span>
               <p className="bg-[#f0ce60] px-3 py-1 mt-1 text-green-500 rounded-md">
-                {allAds && allAds.banner_url
-                  ? allAds.banner_url
+                {allAds && allAds.banner_redirect_url
+                  ? allAds.banner_redirect_url
                   : "No Ad Added in this part."}
               </p>
             </div>

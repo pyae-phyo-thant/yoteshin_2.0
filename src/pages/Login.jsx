@@ -36,21 +36,19 @@ const Login = () => {
 
     form.append("google_id", res.profileObj.googleId);
     form.append("image", res.profileObj.imageUrl);
-    form.append("token", res.accessToken);
     form.append("user_email", res.profileObj.email);
     form.append("user_name", res.profileObj.name);
-    form.append("is_admin", true);
 
     login(form)
       .then((res) => {
         console.log("data from api", res);
 
-        localStorage.setItem("admin_token", res.data.data.token);
+        localStorage.setItem("admin_token", res.data.token);
         localStorage.setItem("admin_Gtoken", Gtoken);
         localStorage.setItem("admin_avatar", avatar);
-        localStorage.setItem("admin_userId", res.data.data.id);
-        localStorage.setItem("admin_email", res.data.data.user_email);
-        localStorage.setItem("admin_name", res.data.data.user_name);
+        localStorage.setItem("admin_userId", res.data.user.id);
+        localStorage.setItem("admin_email", res.data.user.user_email);
+        localStorage.setItem("admin_name", res.data.user.user_name);
         setShowloginButton(false);
       })
       .catch((err) => {
